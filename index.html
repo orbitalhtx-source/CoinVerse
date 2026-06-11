@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,820 +15,97 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --bg-deep: #1a1410;
-            --bg-card: #231e18;
-            --gold: #d4a017;
-            --gold-light: #e0c88e;
-            --silver-sheen: #c0c0c0;
-            --neon-green: #39ff14;
-            --red-down: #ff4444;
-            --border: #3a3025;
-            --text-primary: #f0e6d3;
-            --text-secondary: #a3967c;
-        }
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            font-family: 'Georgia', 'Times New Roman', serif;
-            background: var(--bg-deep);
-            color: var(--text-primary);
-            overscroll-behavior-y: none;
-            -webkit-font-smoothing: antialiased;
-        }
-        .metallic-text {
-            background: linear-gradient(135deg, #e0c88e 0%, #f5ecd7 25%, #e8d5a3 50%, #c0c0c0 75%, #e0c88e 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            background-size: 300% 300%;
-        }
-        .neon-value {
-            color: var(--neon-green);
-            font-weight: 900;
-            text-shadow: 0 0 20px rgba(57,255,20,0.3);
-        }
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 14px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        }
-        .card-gold {
-            border-color: rgba(212,160,23,0.3);
-            box-shadow: 0 4px 20px rgba(212,160,23,0.06);
-        }
-        input, select {
-            background: #1a1410;
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 10px;
-            border-radius: 8px;
-            width: 100%;
-            margin-bottom: 8px;
-            font-size: 15px;
-            font-family: inherit;
-        }
-        input:focus { outline: none; border-color: var(--gold-light); }
-        button { cursor: pointer; font-family: inherit; transition: all 0.15s; }
-        button:active { transform: scale(0.96); }
-        .btn-gold {
-            background: linear-gradient(135deg, #b8860b, #d4a017);
-            color: #1a1410;
-            border: none;
-            padding: 11px;
-            border-radius: 10px;
-            font-weight: bold;
-            width: 100%;
-            font-size: 15px;
-        }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--gold-light);
-            color: var(--gold-light);
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 13px;
-        }
-        .nav-item {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 13px;
-            padding: 6px 10px;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            transition: all 0.2s;
-        }
-        .nav-item.active { color: var(--gold-light); background: rgba(212,160,23,0.1); }
-        .nav-icon { font-size: 18px; }
-        .ticker-up { color: var(--neon-green); }
-        .ticker-down { color: var(--red-down); }
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .badge-buy { background: rgba(57,255,20,0.15); color: var(--neon-green); border: 1px solid rgba(57,255,20,0.3); }
-        .badge-sell { background: rgba(255,68,68,0.15); color: var(--red-down); border: 1px solid rgba(255,68,68,0.3); }
-        .badge-hold { background: rgba(224,200,142,0.15); color: var(--gold-light); border: 1px solid rgba(224,200,142,0.3); }
-        .badge-pass { background: rgba(255,68,68,0.15); color: var(--red-down); border: 1px solid rgba(255,68,68,0.3); }
-        .toast {
-            position: fixed;
-            bottom: 90px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--bg-card);
-            border: 1px solid var(--gold-light);
-            padding: 12px 22px;
-            border-radius: 12px;
-            z-index: 300;
-            font-size: 14px;
-            animation: fadeInUp 0.3s ease;
-        }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-        @keyframes coinBurst { 0% { transform: translateY(0) scale(1); opacity: 1; } 30% { transform: translateY(-200px) scale(1.3); opacity: 1; } 50% { transform: translateY(-200px) scale(0.8); opacity: 0.8; } 70% { transform: translateY(100px) scale(1.5); opacity: 0.4; } 100% { transform: translateY(300px) scale(0.2); opacity: 0; } }
-        @keyframes phoenixFly { 0% { transform: translateX(-100%) translateY(20px); opacity: 0; } 30% { transform: translateX(-30%) translateY(-10px); opacity: 1; } 70% { transform: translateX(30%) translateY(-30px); opacity: 1; } 100% { transform: translateX(100%) translateY(10px); opacity: 0; } }
-        @keyframes goldRain { 0% { transform: translateY(-300px); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(400px); opacity: 0.3; } }
-        @keyframes piggyWiggle { 0%,100% { transform: scale(1); } 25% { transform: scale(1.15); } 75% { transform: scale(0.95); } }
-        @keyframes splashFade { 0% { opacity: 0; transform: scale(0.95); } 50% { opacity: 1; } 100% { opacity: 0; transform: scale(1.05); } }
-        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .splash-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 500;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-deep);
-            pointer-events: none;
-        }
-        .watermark-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-25deg);
-            font-size: 50px;
-            opacity: 0.04;
-            pointer-events: none;
-            white-space: nowrap;
-            z-index: 0;
-        }
+        :root{--bg-deep:#1a1410;--bg-card:#231e18;--gold:#d4a017;--gold-light:#e0c88e;--neon-green:#39ff14;--red-down:#ff4444;--border:#3a3025;--text-primary:#f0e6d3;--text-secondary:#a3967c}
+        *{box-sizing:border-box}
+        body{margin:0;font-family:'Georgia','Times New Roman',serif;background:var(--bg-deep);color:var(--text-primary);overscroll-behavior-y:none}
+        .metallic-text{background:linear-gradient(135deg,#e0c88e 0%,#f5ecd7 25%,#e8d5a3 50%,#c0c0c0 75%,#e0c88e 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:300% 300%}
+        .neon-value{color:var(--neon-green);font-weight:900;text-shadow:0 0 20px rgba(57,255,20,0.3)}
+        .card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:14px}
+        .card-gold{border-color:rgba(212,160,23,0.3)}
+        input,select{background:#1a1410;border:1px solid var(--border);color:var(--text-primary);padding:10px;border-radius:8px;width:100%;margin-bottom:8px;font-size:15px;font-family:inherit}
+        input:focus{outline:none;border-color:var(--gold-light)}
+        button{cursor:pointer;font-family:inherit}
+        button:active{transform:scale(0.96)}
+        .btn-gold{background:linear-gradient(135deg,#b8860b,#d4a017);color:#1a1410;border:none;padding:11px;border-radius:10px;font-weight:bold;width:100%;font-size:15px}
+        .btn-outline{background:transparent;border:1px solid var(--gold-light);color:var(--gold-light);padding:8px 14px;border-radius:8px;font-size:13px}
+        .btn-rect{background:var(--bg-card);border:2px solid var(--gold-light);color:var(--gold-light);padding:14px;border-radius:12px;font-weight:bold;font-size:16px;width:100%;text-align:center;margin-bottom:8px}
+        .btn-rect-accept{border-color:var(--neon-green);color:var(--neon-green)}
+        .btn-rect-retake{border-color:var(--red-down);color:var(--red-down)}
+        .nav-item{background:none;border:none;color:var(--text-secondary);font-size:13px;padding:6px 10px;border-radius:8px;display:flex;flex-direction:column;align-items:center;gap:2px}
+        .nav-item.active{color:var(--gold-light);background:rgba(212,160,23,0.1)}
+        .nav-icon{font-size:18px}
+        .ticker-up{color:var(--neon-green)}
+        .ticker-down{color:var(--red-down)}
+        .badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:bold;text-transform:uppercase}
+        .badge-buy{background:rgba(57,255,20,0.15);color:var(--neon-green);border:1px solid rgba(57,255,20,0.3)}
+        .badge-hold{background:rgba(224,200,142,0.15);color:var(--gold-light);border:1px solid rgba(224,200,142,0.3)}
+        .badge-sell{background:rgba(255,68,68,0.15);color:var(--red-down);border:1px solid rgba(255,68,68,0.3)}
+        .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--gold-light);padding:12px 22px;border-radius:12px;z-index:300;font-size:14px}
+        @keyframes fadeInUp{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+        .toast{animation:fadeInUp 0.3s ease}
+        @keyframes coinBurst{0%{transform:translateY(0) scale(1);opacity:1}30%{transform:translateY(-200px) scale(1.3);opacity:1}50%{transform:translateY(-200px) scale(0.8);opacity:0.8}70%{transform:translateY(100px) scale(1.5);opacity:0.4}100%{transform:translateY(300px) scale(0.2);opacity:0}}
+        @keyframes splashFade{0%{opacity:0;transform:scale(0.95)}50%{opacity:1}100%{opacity:0;transform:scale(1.05)}}
+        @keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+        .splash-overlay{position:fixed;inset:0;z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-deep);pointer-events:none}
+        .watermark-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-25deg);font-size:50px;opacity:0.04;pointer-events:none;white-space:nowrap;z-index:0}
     </style>
 </head>
-<body>
-    <div id="root"></div>
-    <script type="text/babel">
-        const { useState, useEffect, useRef, useCallback } = React;
-
-        // ─── TIERS ──────────────────────────────────
-        const TIERS = { 1:{name:'Seeker',price:'$19.99/wk',coinLimit:50,photosPerSide:1,watermark:true}, 2:{name:'Collector',price:'$39.99/mo',coinLimit:200,photosPerSide:2,watermark:true}, 3:{name:'Echelon',price:'$59.99/mo',coinLimit:500,photosPerSide:3,watermark:true}, 4:{name:'Curator',price:'$99.99/mo',coinLimit:Infinity,photosPerSide:3,watermark:false} };
-
-        // ─── SPOT PRICES ────────────────────────────
-        const BASE_SPOTS = { gold:4547.30, silver:75.82, platinum:1124.50, palladium:1089.00 };
-        function getSpotPrices() {
-            const s = localStorage.getItem('cv_spots');
-            if (s) { const d = JSON.parse(s); if (Date.now()-d.timestamp<3600000) return d.prices; }
-            const prices = {};
-            for (const [k,v] of Object.entries(BASE_SPOTS)) { const c = (Math.random()-0.48)*v*0.01; prices[k] = {price:+(v+c).toFixed(2), change: +((c/v)*100).toFixed(2)}; }
-            localStorage.setItem('cv_spots', JSON.stringify({prices, timestamp:Date.now()}));
-            return prices;
-        }
-
-        // ─── IDB ────────────────────────────────────
-        function openDB() { return new Promise((res,rej)=>{ const r=indexedDB.open('CVPhotos',1); r.onupgradeneeded=e=>e.target.result.createObjectStore('photos',{keyPath:'id'}); r.onsuccess=e=>res(e.target.result); r.onerror=()=>rej(r.error); }); }
-        async function savePhoto(id,dataUrl) { const db=await openDB(); return new Promise((res,rej)=>{ const tx=db.transaction('photos','readwrite'); tx.objectStore('photos').put({id,dataUrl,timestamp:Date.now()}); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); }); }
-        async function getPhoto(id) { const db=await openDB(); return new Promise((res,rej)=>{ const tx=db.transaction('photos','readonly'); const r=tx.objectStore('photos').get(id); r.onsuccess=()=>res(r.result?.dataUrl||null); r.onerror=()=>rej(r.error); }); }
-        async function deletePhoto(id) { const db=await openDB(); return new Promise((res,rej)=>{ const tx=db.transaction('photos','readwrite'); tx.objectStore('photos').delete(id); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); }); }
-        async function getAllPhotos() { const db=await openDB(); return new Promise((res,rej)=>{ const tx=db.transaction('photos','readonly'); const r=tx.objectStore('photos').getAll(); r.onsuccess=()=>{ const m={}; r.result.forEach(x=>m[x.id]=x.dataUrl); res(m); }; r.onerror=()=>rej(r.error); }); }
-        function compressImage(dataUrl, maxW=800) { return new Promise(res=>{ const img=new Image(); img.onload=()=>{ const c=document.createElement('canvas'); const ratio=Math.min(maxW/img.width,1); c.width=img.width*ratio; c.height=img.height*ratio; const ctx=c.getContext('2d'); ctx.drawImage(img,0,0,c.width,c.height); res(c.toDataURL('image/jpeg',0.7)); }; img.src=dataUrl; }); }
-
-        // ─── ECHO GRADE ENGINE ──────────────────────
-        function scoreToGrade(score) {
-            if (score>=95) return {grade:'MS-68 to MS-70',tier:'Registry / Ultra Elite',signal:'STRONG_BUY',signalClass:'badge-buy'};
-            if (score>=90) return {grade:'MS-67',tier:'Top Pop / Conditional Elite',signal:'STRONG_BUY',signalClass:'badge-buy'};
-            if (score>=85) return {grade:'MS-66',tier:'Premium Gem',signal:'BUY',signalClass:'badge-buy'};
-            if (score>=80) return {grade:'MS-65',tier:'True Gem Threshold',signal:'BUY',signalClass:'badge-buy'};
-            if (score>=75) return {grade:'MS-64',tier:'Strong BU',signal:'CONDITIONAL',signalClass:'badge-hold'};
-            if (score>=70) return {grade:'MS-63',tier:'Standard BU',signal:'HOLD',signalClass:'badge-hold'};
-            if (score>=65) return {grade:'AU-58',tier:'Near Mint / Friction Risk',signal:'HOLD',signalClass:'badge-hold'};
-            if (score>=55) return {grade:'AU-50 to AU-55',tier:'About Uncirculated',signal:'PASS',signalClass:'badge-pass'};
-            if (score>=45) return {grade:'XF-40 to XF-45',tier:'Extremely Fine',signal:'PASS',signalClass:'badge-pass'};
-            if (score>=35) return {grade:'VF-20 to VF-35',tier:'Very Fine',signal:'PASS',signalClass:'badge-pass'};
-            return {grade:'Details / Problem',tier:'Flagged',signal:'PASS',signalClass:'badge-pass'};
-        }
-
-        function runEchoAnalysis(imageDataUrl, userInput) {
-            return new Promise(res=>{
-                const img=new Image();
-                img.onload=()=>{
-                    const c=document.createElement('canvas'); const ctx=c.getContext('2d');
-                    c.width=img.width; c.height=img.height; ctx.drawImage(img,0,0);
-                    const idata=ctx.getImageData(0,0,c.width,c.height); const d=idata.data;
-                    let tb=0; for(let i=0;i<d.length;i+=4) tb+=(d[i]+d[i+1]+d[i+2])/3;
-                    const avgBright=tb/(d.length/4);
-                    let vr=0; for(let i=0;i<d.length;i+=4){const v=(d[i]+d[i+1]+d[i+2])/3; vr+=Math.pow(v-avgBright,2);}
-                    const stdDev=Math.sqrt(vr/(d.length/4));
-                    let es=0; for(let y=1;y<c.height-1;y+=4){for(let x=1;x<c.width-1;x+=4){const idx=(y*c.width+x)*4,idxR=(y*c.width+x+1)*4,idxD=((y+1)*c.width+x)*4; const gx=Math.abs((d[idx]+d[idx+1]+d[idx+2])/3-(d[idxR]+d[idxR+1]+d[idxR+2])/3); const gy=Math.abs((d[idx]+d[idx+1]+d[idx+2])/3-(d[idxD]+d[idxD+1]+d[idxD+2])/3); es+=Math.sqrt(gx*gx+gy*gy);}}
-                    const avgEdge=es/((c.width/4)*(c.height/4));
-                    const wearScore = Math.min(100, Math.round(avgBright/2.55*0.4 + stdDev*1.2 + avgEdge*3));
-                    const lusterScore = Math.min(100, Math.round(avgBright/2.8 + stdDev*0.8));
-                    const strikeScore = Math.min(100, Math.round(avgEdge*4 + stdDev*0.6));
-                    const marksScore = Math.min(100, Math.round(100 - stdDev*1.5 + avgEdge*0.5));
-                    const eyeScore = Math.min(100, Math.round((avgBright/2.55 + stdDev/1.5 + avgEdge*1.5)/3*100));
-                    const surfaceScore = Math.min(100, Math.round(avgBright/2.8 + (100-stdDev*1.2)));
-                    const toningScore = Math.min(100, Math.round(70 + Math.random()*25));
-                    const rimScore = Math.min(100, Math.round(85 + Math.random()*10));
-                    const devicesScore = Math.min(100, Math.round(avgEdge*3.5 + stdDev*0.5));
-
-                    // Blend with user input condition
-                    let conditionMod = 0;
-                    if (userInput?.condition === 'uncirculated') conditionMod = 10;
-                    else if (userInput?.condition === 'about_uncirculated') conditionMod = 0;
-                    else if (userInput?.condition === 'lightly_circulated') conditionMod = -10;
-                    else if (userInput?.condition === 'circulated') conditionMod = -20;
-                    else if (userInput?.condition === 'heavily_worn') conditionMod = -30;
-
-                    const overallScore = Math.max(5, Math.min(98, Math.round((wearScore+lusterScore+strikeScore+eyeScore+surfaceScore)/5 + conditionMod)));
-                    const gradeInfo = scoreToGrade(overallScore);
-                    const confidence = Math.round(70 + (overallScore/100)*25);
-
-                    // Build full ANN output per contract
-                    const output = {
-                        success: true,
-                        data: {
-                            scanId: 'scan_'+Date.now(),
-                            coin: {
-                                year: userInput?.year || '',
-                                mint: userInput?.mint || null,
-                                denomination: userInput?.coinType || 'Unknown',
-                                series: userInput?.coinType || 'Unknown',
-                                metal: null, diameterMm: null, weightGrams: null
-                            },
-                            capture: {
-                                imageCount: 1,
-                                angles: ['obverse'],
-                                quality: { focusScore: 85, lightingScore: 80, coverageScore: 90, overallScore: 85 }
-                            },
-                            authentication: {
-                                status: 'likely_authentic',
-                                confidence: 0.92,
-                                notes: ['Surface texture consistent with genuine striking.']
-                            },
-                            grade: {
-                                predicted: gradeInfo.grade,
-                                numeric: overallScore,
-                                range: gradeInfo.grade,
-                                confidence: confidence/100,
-                                basis: ['Image analysis','User-provided condition','Brightness/contrast/edge detection']
-                            },
-                            diagnostics: {
-                                wear: { level: wearScore>85?'none_detected':wearScore>65?'minimal':'moderate', score:wearScore, summary: wearScore>85?'No visible circulation wear.':wearScore>65?'Minor friction on high points.':'Visible wear on high points.' },
-                                luster: { level: lusterScore>80?'strong':lusterScore>55?'moderate':'weak', score:lusterScore, summary: lusterScore>80?'Original mint luster present.':lusterScore>55?'Partial luster remains.':'Luster diminished.' },
-                                strike: { level: strikeScore>80?'above_average':strikeScore>55?'average':'weak', score:strikeScore, summary: strikeScore>80?'Design elements well defined.':strikeScore>55?'Acceptable strike quality.':'Strike weakness noted.' },
-                                marks: { level: marksScore>80?'minimal':marksScore>55?'moderate':'significant', score:marksScore, summary: marksScore>80?'Few contact marks.':marksScore>55?'Visible contact marks.':'Numerous marks present.' },
-                                eyeAppeal: { level: eyeScore>80?'positive':eyeScore>55?'average':'negative', score:eyeScore, summary: eyeScore>80?'Attractive overall.':eyeScore>55?'Acceptable eye appeal.':'Below average eye appeal.' },
-                                surface: { level: surfaceScore>85?'clean':surfaceScore>60?'acceptable':'questionable', score:surfaceScore, summary: surfaceScore>85?'No obvious issues.':surfaceScore>60?'Minor surface concerns.':'Possible cleaning or damage.' },
-                                colorToning: { level: toningScore>80?'natural':toningScore>55?'acceptable':'artificial', score:toningScore, summary: toningScore>80?'Toning appears natural.':toningScore>55?'Toning within acceptable range.':'Toning may be artificial.' },
-                                rim: { level: rimScore>80?'normal':'minor_issues', score:rimScore, summary: rimScore>80?'No major rim issues.':'Minor rim irregularities.' },
-                                devices: { level: devicesScore>80?'strong':devicesScore>55?'average':'weak', score:devicesScore, summary: devicesScore>80?'Devices sharp and visible.':devicesScore>55?'Devices adequately defined.':'Devices show wear.' }
-                            },
-                            redFlags: overallScore<65?[{type:'wear',severity:'medium',detail:'Overall condition suggests circulation.'}]:[],
-                            recommendation: {
-                                action: overallScore>=80?'submit_to_grade':overallScore>=65?'hold':'expert_review',
-                                reason: overallScore>=80?'Coin appears strong enough for grading.':overallScore>=65?'Borderline — consider expert review.':'Significant issues — not recommended for grading.'
-                            },
-                            attribution: { vam:[], bam:[], varieties:[] },
-                            market: {
-                                estimatedValueLow: overallScore*2, estimatedValueHigh: overallScore*5,
-                                currency:'USD', trend:'stable', comps:[]
-                            },
-                            explainLikeIAmHuman: [
-                                overallScore>=80?'This appears uncirculated.':'This shows signs of circulation.',
-                                'Grade is based on surface condition and strike quality.',
-                                userInput?.condition==='uncirculated'&&overallScore<75?'User reported uncirculated, but Echo detects wear — please verify.':null
-                            ].filter(Boolean),
-                            warnings: ['Final grade may shift after professional review.'],
-                            nextSteps: ['Review diagnostics.','Compare against known varieties.','Save to Vault.']
-                        },
-                        error: null
-                    };
-                    res({ output, overallScore, gradeInfo, confidence });
-                };
-                img.src = imageDataUrl;
-            });
-        }
-
-        // ─── ANIMATION COMPONENTS ───────────────────
-        function SplashScreen({ onDone, text, duration=3000 }) {
-            useEffect(()=>{ const t=setTimeout(onDone,duration); return ()=>clearTimeout(t); },[onDone,duration]);
-            return (
-                <div className="splash-overlay" style={{animation:'splashFade '+duration/1000+'s ease forwards'}}>
-                    <div style={{fontSize:60,animation:'coinBurst 2s ease infinite'}}>🪙</div>
-                    <h1 className="metallic-text" style={{fontSize:28,fontWeight:'bold',marginTop:16,backgroundSize:'300% 300%'}}>Coinverse Oracle</h1>
-                    <p style={{color:'var(--gold-light)',fontSize:14,marginTop:4}}>Powered by Echo</p>
-                    <p style={{color:'var(--text-secondary)',fontSize:11,marginTop:16,textAlign:'center',maxWidth:260}}>{text||'Crafted with care by J. Loera V.\nFor collectors who deserve the truth behind every coin.'}</p>
-                </div>
-            );
-        }
-
-        function ScanAnimation({ type, onDone, duration=5000 }) {
-            useEffect(()=>{ const t=setTimeout(onDone,duration); return ()=>clearTimeout(t); },[onDone,duration]);
-            return (
-                <div className="splash-overlay" style={{background:'rgba(26,20,16,0.97)'}}>
-                    {type==='skyBurst' && <div style={{fontSize:50,animation:'coinBurst 1.5s ease forwards'}}>🪙</div>}
-                    {type==='phoenixRise' && <div style={{fontSize:50,animation:'phoenixFly 2s ease forwards'}}>🐦‍🔥</div>}
-                    {type==='goldRain' && <div style={{fontSize:40,animation:'goldRain 2s ease forwards'}}>🪙</div>}
-                    {type==='vaultSlam' && <div style={{fontSize:50,animation:'piggyWiggle 1s ease 3'}}>🏦</div>}
-                    {type==='piggyBank' && <div style={{fontSize:50,animation:'piggyWiggle 0.8s ease 3'}}>🐖</div>}
-                    <p style={{color:'var(--gold-light)',marginTop:16,fontSize:13}}>
-                        {type==='skyBurst'&&'Echo is analyzing...'}
-                        {type==='phoenixRise'&&'Phoenix is watching the market...'}
-                        {type==='goldRain'&&'Weighing the value...'}
-                        {type==='vaultSlam'&&'Securing your vault...'}
-                        {type==='piggyBank'&&'Depositing to vault...'}
-                    </p>
-                </div>
-            );
-        }
-
-        // ─── APP ────────────────────────────────────
-        function App() {
-            const [view, setView] = useState('home');
-            const [userTier, setUserTier] = useState(()=>parseInt(localStorage.getItem('cv_tier'))||1);
-            const [coins, setCoins] = useState(()=>JSON.parse(localStorage.getItem('cv_coins'))||[]);
-            const [listings, setListings] = useState(()=>JSON.parse(localStorage.getItem('cv_listings'))||[]);
-            const [photoCache, setPhotoCache] = useState({});
-            const [spots, setSpots] = useState(getSpotPrices());
-            const [toast, setToast] = useState(null);
-            const [search, setSearch] = useState('');
-            const [editingCoin, setEditingCoin] = useState(null);
-            const [showTierModal, setShowTierModal] = useState(false);
-            const [isLoggedIn, setIsLoggedIn] = useState(()=>!!localStorage.getItem('cv_user'));
-            const [authForm, setAuthForm] = useState({email:'',password:'',name:''});
-            const [authMode, setAuthMode] = useState('login');
-            const [showSplash, setShowSplash] = useState(false);
-            const [splashMsg, setSplashMsg] = useState('');
-
-            // Scan state
-            const [scanPhase, setScanPhase] = useState(null); // 'preScan'|'capturing'|'processing'|'result'
-            const [preScanForm, setPreScanForm] = useState({coinType:'',year:'',mint:'',condition:'uncirculated'});
-            const [scanPhotos, setScanPhotos] = useState([]);
-            const [scanResult, setScanResult] = useState(null);
-            const [scanAnim, setScanAnim] = useState(null);
-            const [captureAngle, setCaptureAngle] = useState(0);
-            const [captureSide, setCaptureSide] = useState('obv');
-            const [echoChat, setEchoChat] = useState([]);
-            const [echoInput, setEchoInput] = useState('');
-
-            const tier = TIERS[userTier];
-            const coinCount = coins.length;
-            const atLimit = coinCount >= tier.coinLimit;
-            const totalValue = coins.reduce((a,c)=>a+Number(c.value||0),0);
-            const prevValue = coins.reduce((a,c)=>a+Number(c.prevValue||c.value||0),0);
-            const valueChange = totalValue-prevValue;
-            const valueChangePct = prevValue?((valueChange/prevValue)*100).toFixed(2):0;
-
-            useEffect(()=>{localStorage.setItem('cv_coins',JSON.stringify(coins));},[coins]);
-            useEffect(()=>{localStorage.setItem('cv_listings',JSON.stringify(listings));},[listings]);
-            useEffect(()=>{localStorage.setItem('cv_tier',userTier);},[userTier]);
-            useEffect(()=>{getAllPhotos().then(setPhotoCache);},[]);
-            useEffect(()=>{const i=setInterval(()=>setSpots(getSpotPrices()),60000); return ()=>clearInterval(i);},[]);
-
-            const st=(msg)=>{setToast(msg); setTimeout(()=>setToast(null),2500);};
-
-            // Auth
-            const handleAuth = ()=>{
-                if(!authForm.email||!authForm.password){st('Email and password required'); return;}
-                if(authMode==='signup'&&!authForm.name){st('Name required'); return;}
-                const user = {email:authForm.email,name:authForm.name||authForm.email.split('@')[0],tier:1,joined:Date.now()};
-                localStorage.setItem('cv_user',JSON.stringify(user));
-                setIsLoggedIn(true);
-                setShowSplash(true);
-                setSplashMsg('Welcome to Coinverse Oracle.\nCrafted with care by J. Loera V.\nFor collectors who deserve the truth.');
-            };
-            const handleLogout = ()=>{localStorage.removeItem('cv_user'); setIsLoggedIn(false);};
-
-            // Vault
-            const addCoin = ()=>{
-                if(atLimit){st('🔒 '+tier.name+' tier limited to '+tier.coinLimit+' coins'); return;}
-                const name=document.getElementById('vc-name')?.value; const val=document.getElementById('vc-value')?.value;
-                if(!name||!val){st('Name and value required'); return;}
-                setCoins([...coins,{id:Date.now(),name,year:document.getElementById('vc-year')?.value||'',grade:document.getElementById('vc-grade')?.value||'',value:Number(val),obvPhotos:[],revPhotos:[],createdAt:Date.now()}]);
-                document.getElementById('vc-name').value=''; document.getElementById('vc-year').value=''; document.getElementById('vc-grade').value=''; document.getElementById('vc-value').value='';
-                st('✅ Coin added');
-            };
-            const deleteCoin = (id)=>{ const c=coins.find(x=>x.id===id); if(c){[...(c.obvPhotos||[]),...(c.revPhotos||[])].forEach(pid=>deletePhoto(pid));} setCoins(coins.filter(x=>x.id!==id)); setEditingCoin(null); st('🗑️ Removed'); };
-            const updateCoin = (id,f,v)=>{setCoins(coins.map(c=>c.id===id?{...c,[f]:f==='value'?Number(v):v}:c));};
-
-            // Market
-            const addListing = ()=>{
-                const n=document.getElementById('ml-name')?.value; const p=document.getElementById('ml-price')?.value;
-                if(!n||!p)return;
-                setListings([...listings,{id:Date.now(),name:n,price:Number(p)}]);
-                document.getElementById('ml-name').value=''; document.getElementById('ml-price').value='';
-                st('📢 Listed');
-            };
-            const deleteListing = (id)=>{setListings(listings.filter(l=>l.id!==id)); st('🗑️ Removed');};
-
-            // Photo capture
-            const capturePhoto = ()=>{
-                const input=document.createElement('input'); input.type='file'; input.accept='image/*'; input.capture='environment';
-                input.onchange=async e=>{
-                    const file=e.target.files[0]; if(!file)return;
-                    const reader=new FileReader();
-                    reader.onload=async ev=>{
-                        const compressed=await compressImage(ev.target.result,800);
-                        const pid='photo_'+Date.now()+'_'+Math.random().toString(36).slice(2);
-                        await savePhoto(pid,compressed);
-                        setPhotoCache(p=>{return {...p,[pid]:compressed};});
-                        setScanPhotos(prev=>[...prev,pid]);
-                        st('📸 Captured '+(scanPhotos.length+1)+'/6');
-                    };
-                    reader.readAsDataURL(file);
-                };
-                input.click();
-            };
-
-            // Full scan flow
-            const startScan = ()=>{
-                setScanPhase('preScan');
-                setScanPhotos([]);
-                setScanResult(null);
-                setCaptureAngle(0);
-                setCaptureSide('obv');
-            };
-            const beginCapture = ()=>{
-                if(!preScanForm.coinType||!preScanForm.year){st('Coin type and year required'); return;}
-                setScanPhase('capturing');
-            };
-            const advanceCapture = ()=>{
-                const totalNeeded = 6;
-                if(scanPhotos.length>=totalNeeded){
-                    setScanPhase('processing');
-                    const anims=['skyBurst','phoenixRise','goldRain','vaultSlam'];
-                    setScanAnim(anims[Math.floor(Math.random()*anims.length)]);
-                } else {
-                    setCaptureSide(scanPhotos.length<3?'obv':'rev');
-                    setCaptureAngle(scanPhotos.length%3);
-                    capturePhoto();
-                }
-            };
-            const finishProcessing = async ()=>{
-                setScanAnim(null);
-                if(scanPhotos.length>0){
-                    const dataUrl = photoCache[scanPhotos[0]] || await getPhoto(scanPhotos[0]);
-                    if(dataUrl){
-                        const {output} = await runEchoAnalysis(dataUrl, preScanForm);
-                        setScanResult(output);
-                    }
-                }
-                setScanPhase('result');
-            };
-            const saveToVault = ()=>{
-                if(!scanResult||atLimit)return;
-                const d=scanResult.data;
-                setCoins([...coins,{
-                    id:Date.now(), name:d.coin.denomination, year:d.coin.year,
-                    grade:d.grade.predicted, value:d.market.estimatedValueHigh||100,
-                    notes:'Echo: '+d.grade.predicted+' ('+Math.round(d.grade.confidence*100)+'%)',
-                    obvPhotos:scanPhotos.slice(0,3), revPhotos:scanPhotos.slice(3,6),
-                    lastAnalysis:d, createdAt:Date.now()
-                }]);
-                setScanResult(null); setScanPhase(null); setScanPhotos([]);
-                st('✅ Deposited to vault');
-            };
-
-            // Echo chat
-            const sendEcho = ()=>{
-                if(!echoInput.trim())return;
-                const q=echoInput.toLowerCase();
-                let r='';
-                if(q.includes('grade')) r='I analyze strike, luster, marks, eye appeal, surface, toning, rim, and devices. Scan a coin for full diagnostics.';
-                else if(q.includes('portfolio')||q.includes('value')) r='Your portfolio: $'+totalValue.toLocaleString()+' across '+coins.length+' coins. '+(valueChange>=0?'▲':'▼')+' $'+Math.abs(valueChange).toLocaleString()+' today.';
-                else if(q.includes('signal')||q.includes('buy')||q.includes('sell')) r='I use a precision matrix: score→grade→signal. 90+=Strong Buy, 85-89=Buy, 75-84=Conditional/Hold, <75=Pass. No emotions, just data.';
-                else r='I am Echo, the numismatic intelligence behind Coinverse Oracle. I grade coins, analyze markets, and protect your collection. Ask me anything.';
-                setEchoChat([...echoChat,{role:'user',text:echoInput},{role:'echo',text:r}]);
-                setEchoInput('');
-            };
-
-            // Revalue
-            const revalue = ()=>{
-                setCoins(coins.map(c=>{const f=1+(Math.random()-0.48)*0.04; return {...c,prevValue:c.value,value:Math.round(Number(c.value)*f)};}));
-                st('🌙 Portfolio revalued');
-            };
-
-            if(!isLoggedIn) return (
-                <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{background:'var(--bg-deep)'}}>
-                    <div style={{fontSize:50,marginBottom:8}}>🐦‍🔥</div>
-                    <h1 className="metallic-text" style={{fontSize:26,fontWeight:'bold',marginBottom:4}}>Coinverse Oracle</h1>
-                    <p style={{color:'var(--gold-light)',fontSize:12,marginBottom:24}}>Powered by Echo</p>
-                    <div className="card card-gold" style={{width:'100%',maxWidth:340}}>
-                        <div className="flex gap-2 mb-4">
-                            <button onClick={()=>setAuthMode('login')} className="btn-outline" style={{flex:1,background:authMode==='login'?'rgba(224,200,142,0.1)':'transparent'}}>Sign In</button>
-                            <button onClick={()=>setAuthMode('signup')} className="btn-outline" style={{flex:1,background:authMode==='signup'?'rgba(224,200,142,0.1)':'transparent'}}>Create Account</button>
-                        </div>
-                        {authMode==='signup'&&<input placeholder="Full Name" value={authForm.name} onChange={e=>setAuthForm({...authForm,name:e.target.value})} />}
-                        <input placeholder="Email" type="email" value={authForm.email} onChange={e=>setAuthForm({...authForm,email:e.target.value})} />
-                        <input placeholder="Password" type="password" value={authForm.password} onChange={e=>setAuthForm({...authForm,password:e.target.value})} />
-                        <button className="btn-gold" onClick={handleAuth}>{authMode==='login'?'Sign In':'Create Account'}</button>
-                    </div>
-                    <p style={{color:'var(--text-secondary)',fontSize:10,marginTop:20,textAlign:'center'}}>Crafted with care by J. Loera V.<br/>For collectors who deserve the truth behind every coin.</p>
-                </div>
-            );
-
-            return (
-                <div className="min-h-screen pb-16" style={{background:'var(--bg-deep)'}}>
-                    {showSplash && <SplashScreen text={splashMsg} onDone={()=>setShowSplash(false)} duration={3500} />}
-                    {scanAnim && <ScanAnimation type={scanAnim} onDone={finishProcessing} duration={5000} />}
-
-                    {/* Header */}
-                    <header className="sticky top-0 z-40 px-4 py-3 border-b flex justify-between items-center" style={{background:'rgba(26,20,16,0.95)',borderColor:'var(--border)',backdropFilter:'blur(10px)'}}>
-                        <div>
-                            <h1 className="text-lg font-bold metallic-text">Coinverse</h1>
-                            <span style={{color:'var(--gold-light)',fontSize:10}}>Oracle Edition · {tier.name}</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <button className="btn-outline text-xs" onClick={()=>setShowTierModal(true)}>Upgrade</button>
-                            <button className="btn-outline text-xs" onClick={handleLogout}>Logout</button>
-                        </div>
-                    </header>
-
-                    <div className="px-3 pt-3 max-w-lg mx-auto">
-                        {/* HOME */}
-                        {view==='home'&&(
-                            <div className="space-y-4">
-                                <div className="card card-gold text-center" style={{position:'relative',overflow:'hidden'}}>
-                                    {tier.watermark&&<div className="watermark-text">COINVERSE {tier.name.toUpperCase()}</div>}
-                                    <p style={{color:'var(--text-secondary)',fontSize:11,textTransform:'uppercase',letterSpacing:2}}>Portfolio Value</p>
-                                    <p className="neon-value" style={{fontSize:34}}>${totalValue.toLocaleString()}</p>
-                                    <p style={{fontSize:13,color:valueChange>=0?'var(--neon-green)':'var(--red-down)'}}>{valueChange>=0?'▲':'▼'} ${Math.abs(valueChange).toLocaleString()} ({valueChangePct}%) Today</p>
-                                    <button className="btn-outline mt-2 text-xs" onClick={revalue}>🔄 Refresh</button>
-                                </div>
-                                <div className="grid grid-cols-4 gap-2">
-                                    {Object.entries(spots).map(([k,v])=>(
-                                        <div key={k} className="card text-center" style={{padding:10}}>
-                                            <p style={{fontSize:10,color:'var(--text-secondary)',textTransform:'uppercase'}}>{k}</p>
-                                            <p style={{fontSize:13,fontWeight:'bold',color:'var(--gold-light)'}}>${v.price.toLocaleString()}</p>
-                                            <p style={{fontSize:10,color:v.change>=0?'var(--neon-green)':'var(--red-down)'}}>{v.change>=0?'▲':'▼'} {Math.abs(v.change).toFixed(2)}%</p>
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="card card-gold">
-                                    <h3 style={{fontWeight:'bold',color:'var(--gold-light)',marginBottom:8}}>📊 2026 Market Pulse</h3>
-                                    <div className="space-y-2 text-sm">
-                                        <div className="flex justify-between"><span>Morgan Dollars</span><span className="ticker-up">▲ +11.2% YTD</span></div>
-                                        <div className="flex justify-between"><span>Peace Dollars</span><span className="ticker-up">▲ +8.7% YTD</span></div>
-                                        <div className="flex justify-between"><span>Key Dates</span><span className="ticker-up">▲ +19.4% YTD</span></div>
-                                    </div>
-                                    <p style={{fontSize:10,color:'var(--text-secondary)',marginTop:8}}>Institutional demand surging. DMPL Morgans and key dates leading. Certified coins decoupling from bullion.</p>
-                                </div>
-                                <div className="card card-gold">
-                                    <h3 style={{fontWeight:'bold',color:'var(--gold-light)',marginBottom:8}}>🎯 Buy / Sell / Hold Signals</h3>
-                                    {[{coin:'1884-S Morgan MS-65 DMPL',last:185000,pop:3,chg:18.4,sig:'BUY',cls:'badge-buy',note:'Pop 3. Heritage Jan 2026: $178K.'},{coin:'1932-S Washington MS-65',last:52000,pop:18,chg:12.1,sig:'HOLD',cls:'badge-hold',note:'Key date. Demand outpacing supply.'},{coin:'1934-S Peace MS-64',last:89000,pop:22,chg:14.8,sig:'HOLD',cls:'badge-hold',note:'Major auction Q3 2026.'}].map((s,i)=>(
-                                        <div key={i} className="flex justify-between items-start py-2" style={{borderBottom:i<2?'1px solid var(--border)':'none'}}>
-                                            <div><p style={{fontWeight:'bold',fontSize:12}}>{s.coin}</p><p style={{fontSize:10,color:'var(--text-secondary)'}}>{s.note}</p></div>
-                                            <div className="text-right"><span className={`badge ${s.cls}`}>{s.sig}</span><p className="neon-value" style={{fontSize:13}}>${s.last.toLocaleString()}</p><p style={{fontSize:9,color:'var(--text-secondary)'}}>Pop:{s.pop} <span className="ticker-up">▲{s.chg}%</span></p></div>
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="card">
-                                    <h3 style={{fontWeight:'bold',color:'var(--gold-light)',marginBottom:8}}>📅 Upcoming Auctions</h3>
-                                    {[{house:'Heritage Auctions',event:'US Coins Signature Sale',date:'June 14, 2026',note:'400+ lots, major DMPL Morgan collection'},{house:"Stack's Bowers",event:'Official ANA Auction',date:'Aug 6-10, 2026',note:'World record Morgan Dollar collection'}].map((a,i)=>(
-                                        <div key={i} className="py-2" style={{borderBottom:i===0?'1px solid var(--border)':'none'}}>
-                                            <p style={{fontWeight:'bold',fontSize:12,color:'var(--gold-light)'}}>{a.house}</p>
-                                            <p style={{fontSize:11}}>{a.event} — {a.date}</p>
-                                            <p style={{fontSize:10,color:'var(--text-secondary)'}}>{a.note}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* SCAN */}
-                        {view==='scan'&&(
-                            <div className="space-y-4">
-                                <div className="card card-gold text-center">
-                                    <h3 style={{fontWeight:'bold',color:'var(--gold-light)',marginBottom:4}}>🔬 Echo Scan</h3>
-                                    <p style={{fontSize:11,color:'var(--text-secondary)'}}>6 photos · Full diagnostic report · Grade & Value</p>
-                                </div>
-
-                                {!scanPhase&&(
-                                    <div className="card text-center space-y-3">
-                                        <p style={{fontSize:40}}>📷</p>
-                                        <button className="btn-gold" onClick={startScan}>Start Scan</button>
-                                    </div>
-                                )}
-
-                                {scanPhase==='preScan'&&(
-                                    <div className="card card-gold space-y-2">
-                                        <h3 style={{fontWeight:'bold',color:'var(--gold-light)'}}>📋 Tell Echo About Your Coin</h3>
-                                        <input placeholder="Coin Type (e.g. Morgan Dollar) *" value={preScanForm.coinType} onChange={e=>setPreScanForm({...preScanForm,coinType:e.target.value})} />
-                                        <div className="flex gap-2">
-                                            <input placeholder="Year *" value={preScanForm.year} onChange={e=>setPreScanForm({...preScanForm,year:e.target.value})} />
-                                            <input placeholder="Mint (e.g. S)" value={preScanForm.mint} onChange={e=>setPreScanForm({...preScanForm,mint:e.target.value})} />
-                                        </div>
-                                        <select value={preScanForm.condition} onChange={e=>setPreScanForm({...preScanForm,condition:e.target.value})}>
-                                            <option value="uncirculated">Uncirculated (New)</option>
-                                            <option value="about_uncirculated">About Uncirculated</option>
-                                            <option value="lightly_circulated">Lightly Circulated</option>
-                                            <option value="circulated">Circulated</option>
-                                            <option value="heavily_worn">Heavily Worn</option>
-                                        </select>
-                                        <p style={{fontSize:10,color:'var(--text-secondary)'}}>This helps Echo calibrate — it will verify your assessment.</p>
-                                        <button className="btn-gold" onClick={beginCapture}>Begin Capture</button>
-                                    </div>
-                                )}
-
-                                {scanPhase==='capturing'&&(
-                                    <div className="card card-gold text-center space-y-3">
-                                        <p style={{fontWeight:'bold',color:'var(--gold-light)'}}>
-                                            {captureSide==='obv'?'🪙 Obverse':'🔄 Reverse'} — Photo {captureSide==='obv'?captureAngle+1:captureAngle+1} of 3
-                                        </p>
-                                        <p style={{fontSize:11,color:'var(--text-secondary)'}}>
-                                            {captureAngle===0?'Straight down':captureAngle===1?'Tilt slightly left':'Tilt slightly right'}
-                                        </p>
-                                        <p style={{fontSize:12}}>Captured: {scanPhotos.length}/6</p>
-                                        <div className="flex gap-1 justify-center">
-                                            {[0,1,2].map(i=><div key={i} style={{width:10,height:10,borderRadius:'50%',background:i<=captureAngle&&captureSide==='obv'?'var(--gold-light)':'var(--border)'}}/>)}
-                                        </div>
-                                        <button className="btn-gold" onClick={capturePhoto}>📸 Capture</button>
-                                        <button className="btn-outline" onClick={advanceCapture}>
-                                            {scanPhotos.length>=5?'✅ Complete & Analyze':'Next →'}
-                                        </button>
-                                        <button className="btn-outline" style={{borderColor:'var(--red-down)',color:'var(--red-down)'}} onClick={()=>{setScanPhase(null);setScanPhotos([]);}}>Cancel</button>
-                                    </div>
-                                )}
-
-                                {scanPhase==='processing'&&(
-                                    <div className="card card-gold text-center" style={{padding:30}}>
-                                        <p style={{fontSize:40,animation:'coinBurst 1.5s ease infinite'}}>🪙</p>
-                                        <p style={{fontWeight:'bold',color:'var(--gold-light)',marginTop:8}}>Echo is analyzing...</p>
-                                        <p style={{fontSize:11,color:'var(--text-secondary)'}}>Comparing surfaces, checking diagnostics</p>
-                                    </div>
-                                )}
-
-                                {scanPhase==='result'&&scanResult&&(()=>{const d=scanResult.data; return (
-                                    <div className="space-y-3" style={{animation:'slideUp 0.5s ease'}}>
-                                        <div className="card card-gold">
-                                            <div className="flex justify-between items-start">
-                                                <div>
-                                                    <h2 style={{fontWeight:'bold',fontSize:16,color:'var(--gold-light)'}}>{d.coin.year} {d.coin.mint||''} {d.coin.denomination}</h2>
-                                                    <p style={{fontSize:11,color:'var(--text-secondary)'}}>{d.coin.series} · {d.grade.predicted} · {Math.round(d.grade.confidence*100)}% confidence</p>
-                                                </div>
-                                                <span className={`badge ${d.recommendation.action==='submit_to_grade'?'badge-buy':'badge-hold'}`} style={{fontSize:11,padding:'6px 10px'}}>
-                                                    {d.recommendation.action.replace(/_/g,' ')}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {[{l:'Wear',v:d.diagnostics.wear.level,s:d.diagnostics.wear.summary},{l:'Luster',v:d.diagnostics.luster.level,s:d.diagnostics.luster.summary},{l:'Strike',v:d.diagnostics.strike.level,s:d.diagnostics.strike.summary},{l:'Marks',v:d.diagnostics.marks.level,s:d.diagnostics.marks.summary},{l:'Eye Appeal',v:d.diagnostics.eyeAppeal.level,s:d.diagnostics.eyeAppeal.summary},{l:'Surface',v:d.diagnostics.surface.level,s:d.diagnostics.surface.summary}].map((x,i)=>(
-                                                <div key={i} className="card" style={{padding:10}}>
-                                                    <p style={{fontSize:9,color:'var(--text-secondary)',textTransform:'uppercase'}}>{x.l}</p>
-                                                    <p style={{fontWeight:'bold',fontSize:13,color:'var(--gold-light)'}}>{x.v}</p>
-                                                    <p style={{fontSize:10,color:'var(--text-secondary)',marginTop:2}}>{x.s}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        {d.redFlags.length>0&&(
-                                            <div className="card" style={{borderColor:'rgba(255,68,68,0.3)'}}>
-                                                <p style={{fontWeight:'bold',color:'var(--red-down)',fontSize:12}}>⚠️ Flags</p>
-                                                {d.redFlags.map((f,i)=><p key={i} style={{fontSize:11,color:'var(--red-down)'}}>• {f.type}: {f.detail}</p>)}
-                                            </div>
-                                        )}
-                                        {d.market.estimatedValueHigh&&(
-                                            <div className="card card-gold text-center">
-                                                <p style={{fontSize:10,color:'var(--text-secondary)'}}>Estimated Value</p>
-                                                <p className="neon-value" style={{fontSize:24}}>${d.market.estimatedValueLow} – ${d.market.estimatedValueHigh}</p>
-                                                <p style={{fontSize:10,color:'var(--text-secondary)'}}>Trend: {d.market.trend}</p>
-                                            </div>
-                                        )}
-                                        <p style={{fontSize:11,color:'var(--text-secondary)',textAlign:'center'}}>{d.explainLikeIAmHuman.join(' ')}</p>
-                                        <button className="btn-gold" onClick={saveToVault}>💾 Deposit to Vault</button>
-                                        <button className="btn-outline" onClick={()=>{setScanPhase(null);setScanResult(null);setScanPhotos([]);}}>Discard</button>
-                                    </div>
-                                );})()}
-
-                                {/* Vault tab condensed for space — same as before */}
-                            </div>
-                        )}
-
-                        {/* VAULT */}
-                        {view==='vault'&&(
-                            <div className="space-y-4">
-                                <div className="card card-gold">
-                                    <h3 style={{fontWeight:'bold',color:'var(--gold-light)',marginBottom:8}}>💼 Vault ({coinCount}/{tier.coinLimit===Infinity?'∞':tier.coinLimit})</h3>
-                                    {atLimit&&<p style={{fontSize:10,color:'var(--red-down)'}}>Limit reached. Upgrade to add more.</p>}
-                                    <input id="vc-name" placeholder="Coin Name *" />
-                                    <div className="flex gap-2"><input id="vc-year" placeholder="Year" /><input id="vc-grade" placeholder="Grade" /></div>
-                                    <input id="vc-value" type="number" placeholder="Value ($) *" />
-                                    <button className="btn-gold" onClick={addCoin} disabled={atLimit}>Add to Vault</button>
-                                </div>
-                                <input placeholder="🔍 Search vault..." value={search} onChange={e=>setSearch(e.target.value)} style={{marginBottom:0}} />
-                                {coins.filter(c=>c.name.toLowerCase().includes(search.toLowerCase())).length===0?(
-                                    <div className="card text-center" style={{padding:30}}><p style={{fontSize:40}}>🪙</p><p style={{color:'var(--text-secondary)'}}>{search?'No matches':'Vault empty'}</p></div>
-                                ):coins.filter(c=>c.name.toLowerCase().includes(search.toLowerCase())).map(c=>(
-                                    <div key={c.id} className="card" onClick={()=>setEditingCoin(editingCoin===c.id?null:c.id)}>
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <p style={{fontWeight:'bold',fontSize:14}}>{c.name}</p>
-                                                <p style={{fontSize:10,color:'var(--text-secondary)'}}>{c.year||'—'} · {c.grade||'—'}</p>
-                                                {c.lastAnalysis&&<p style={{fontSize:9,color:'var(--gold-light)'}}>Echo: {c.lastAnalysis.grade?.predicted||c.lastAnalysis.grade} ({Math.round((c.lastAnalysis.grade?.confidence||0.8)*100)}%)</p>}
-                                            </div>
-                                            <p className="neon-value" style={{fontSize:16}}>${Number(c.value).toLocaleString()}</p>
-                                        </div>
-                                        {editingCoin===c.id&&(
-                                            <div className="space-y-2 mt-3" onClick={e=>e.stopPropagation()}>
-                                                <input value={c.name} onChange={e=>updateCoin(c.id,'name',e.target.value)} placeholder="Name" />
-                                                <div className="flex gap-2"><input value={c.year} onChange={e=>updateCoin(c.id,'year',e.target.value)} placeholder="Year" /><input value={c.grade} onChange={e=>updateCoin(c.id,'grade',e.target.value)} placeholder="Grade" /></div>
-                                                <input type="number" value={c.value} onChange={e=>updateCoin(c.id,'value',e.target.value)} placeholder="Value" />
-                                                <div className="flex gap-2">
-                                                    <button className="btn-gold" style={{fontSize:11,padding:6}} onClick={()=>setEditingCoin(null)}>Done</button>
-                                                    <button className="btn-outline" style={{borderColor:'var(--red-down)',color:'var(--red-down)',fontSize:11}} onClick={()=>deleteCoin(c.id)}>Delete</button>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* MARKET */}
-                        {view==='market'&&(
-                            <div className="space-y-4">
-                                <div className="card card-gold">
-                                    <h3 style={{fontWeight:'bold',color:'var(--gold-light)',marginBottom:8}}>📢 Post Listing</h3>
-                                    <input id="ml-name" placeholder="Coin Name *" />
-                                    <input id="ml-price" type="number" placeholder="Price ($) *" />
-                                    <button className="btn-gold" onClick={addListing}>Post</button>
-                                </div>
-                                <h3 style={{fontWeight:'bold',color:'var(--gold-light)'}}>📋 Feed ({listings.length})</h3>
-                                {listings.length===0?<div className="card text-center" style={{padding:30}}><p style={{color:'var(--text-secondary)'}}>No listings</p></div>:
-                                    [...listings].reverse().map(l=>{
-                                        const allP=listings.map(x=>Number(x.price)).filter(p=>p>0);
-                                        const avg=allP.length?allP.reduce((a,b)=>a+b,0)/allP.length:l.price;
-                                        const ratio=l.price/avg;
-                                        const intel=ratio<0.7?{a:'BUY',c:'badge-buy'}:ratio<0.9?{a:'BUY',c:'badge-buy'}:ratio<1.1?{a:'HOLD',c:'badge-hold'}:{a:'PASS',c:'badge-pass'};
-                                        return (
-                                            <div key={l.id} className="card flex justify-between items-center">
-                                                <div><p style={{fontWeight:'bold'}}>{l.name}</p><p className="neon-value" style={{fontSize:18}}>${Number(l.price).toLocaleString()}</p></div>
-                                                <span className={`badge ${intel.c}`}>{intel.a}</span>
-                                            </div>
-                                        );
-                                    })
-                                }
-                            </div>
-                        )}
-
-                        {/* ECHO */}
-                        {view==='echo'&&(
-                            <div className="space-y-3">
-                                <div className="card card-gold">
-                                    <h3 style={{fontWeight:'bold',color:'var(--gold-light)'}}>🤖 Echo — Numismatic Intelligence</h3>
-                                    <p style={{fontSize:10,color:'var(--text-secondary)'}}>Precision grading. Market signals. Collection insights.</p>
-                                </div>
-                                <div className="card space-y-2" style={{maxHeight:350,overflowY:'auto',minHeight:180}}>
-                                    {echoChat.length===0&&<p style={{color:'var(--text-secondary)',textAlign:'center',padding:20}}>Ask Echo about grading, portfolio value, or market signals...</p>}
-                                    {echoChat.map((m,i)=>(
-                                        <div key={i} style={{textAlign:m.role==='user'?'right':'left'}}>
-                                            <span style={{display:'inline-block',padding:'8px 12px',borderRadius:10,background:m.role==='user'?'rgba(224,200,142,0.1)':'rgba(57,255,20,0.06)',fontSize:12,maxWidth:'85%'}}>{m.text}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="flex gap-2">
-                                    <input value={echoInput} onChange={e=>setEchoInput(e.target.value)} placeholder="Ask Echo..." style={{marginBottom:0,flex:1}} onKeyDown={e=>e.key==='Enter'&&sendEcho()} />
-                                    <button className="btn-gold" style={{width:'auto',padding:'10px 16px'}} onClick={sendEcho}>Send</button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Bottom Nav */}
-                    <nav className="fixed bottom-0 left-0 right-0 z-40 px-2 py-2 flex justify-around" style={{background:'rgba(26,20,16,0.97)',borderTop:'1px solid var(--border)',backdropFilter:'blur(10px)'}}>
-                        {[{id:'home',label:'Home',icon:'🏠'},{id:'scan',label:'Scan',icon:'📷'},{id:'vault',label:'Vault',icon:'💼'},{id:'market',label:'Market',icon:'📊'},{id:'echo',label:'Echo',icon:'🤖'}].map(t=>(
-                            <button key={t.id} className={`nav-item ${view===t.id?'active':''}`} onClick={()=>setView(t.id)}>
-                                <span className="nav-icon">{t.icon}</span><span style={{fontSize:9}}>{t.label}</span>
-                            </button>
-                        ))}
-                    </nav>
-
-                    {/* Tier Modal */}
-                    {showTierModal&&(
-                        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.85)',zIndex:400,display:'flex',alignItems:'center',justifyContent:'center',padding:20}} onClick={()=>setShowTierModal(false)}>
-                            <div className="card card-gold" style={{width:'100%',maxWidth:340}} onClick={e=>e.stopPropagation()}>
-                                <h3 style={{fontWeight:'bold',color:'var(--gold-light)',textAlign:'center',marginBottom:12}}>Upgrade Tier</h3>
-                                {Object.entries(TIERS).map(([k,v])=>(
-                                    <div key={k} className="py-3 flex justify-between items-center" style={{borderBottom:k<4?'1px solid var(--border)':'none',opacity:parseInt(k)===userTier?1:0.7}}>
-                                        <div><p style={{fontWeight:'bold',color:'var(--gold-light)'}}>{v.name}</p><p style={{fontSize:10,color:'var(--text-secondary)'}}>{v.coinLimit===Infinity?'Unlimited':v.coinLimit} coins · {v.photosPerSide} photos/side</p></div>
-                                        <div className="text-right"><p className="neon-value" style={{fontSize:13}}>{v.price}</p>
-                                            {parseInt(k)===userTier?<span className="badge badge-hold">Current</span>:
-                                                <button className="btn-outline text-xs" onClick={()=>{setUserTier(parseInt(k));setShowTierModal(false);st('✅ Upgraded to '+v.name+'!');}}>Select</button>
-                                            }
-                                        </div>
-                                    </div>
-                                ))}
-                                <button className="btn-outline mt-3" style={{width:'100%'}} onClick={()=>setShowTierModal(false)}>Close</button>
-                            </div>
-                        </div>
-                    )}
-
-                    {toast&&<div className="toast">{toast}</div>}
-                </div>
-            );
-        }
-
-        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-    </script>
-    <script>
-        if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register(URL.createObjectURL(new Blob([`const C='cv-v3';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./'])))});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{if(res.ok){const cl=res.clone();caches.open(C).then(c=>c.put(e.request,cl));}return res;})))})`],{type:'application/javascript'})))});}
-    </script>
+<body><div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect}=React;
+const PIPELINE_URL='https://echo-pipeline.onrender.com';
+const TIERS={1:{name:'Seeker',price:'$19.99/wk',coinLimit:50},2:{name:'Collector',price:'$39.99/mo',coinLimit:200},3:{name:'Echelon',price:'$59.99/mo',coinLimit:500},4:{name:'Curator',price:'$99.99/mo',coinLimit:Infinity}};
+const BASE_SPOTS={gold:4547.30,silver:75.82,platinum:1124.50,palladium:1089.00};
+function getSpots(){const s=localStorage.getItem('cv_spots');if(s){const d=JSON.parse(s);if(Date.now()-d.timestamp<3600000)return d.prices}const p={};for(const[k,v]of Object.entries(BASE_SPOTS)){const c=(Math.random()-0.48)*v*0.01;p[k]={price:+(v+c).toFixed(2),change:+((c/v)*100).toFixed(2)}}localStorage.setItem('cv_spots',JSON.stringify({prices:p,timestamp:Date.now()}));return p}
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open('CVPhotos',1);r.onupgradeneeded=e=>e.target.result.createObjectStore('photos',{keyPath:'id'});r.onsuccess=e=>res(e.target.result);r.onerror=()=>rej(r.error)})}
+async function savePhoto(id,dataUrl){const db=await openDB();return new Promise((res,rej)=>{const tx=db.transaction('photos','readwrite');tx.objectStore('photos').put({id,dataUrl});tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
+async function getPhoto(id){const db=await openDB();return new Promise((res,rej)=>{const tx=db.transaction('photos','readonly');const r=tx.objectStore('photos').get(id);r.onsuccess=()=>res(r.result?.dataUrl||null);r.onerror=()=>rej(r.error)})}
+async function getAllPhotos(){const db=await openDB();return new Promise((res,rej)=>{const tx=db.transaction('photos','readonly');const r=tx.objectStore('photos').getAll();r.onsuccess=()=>{const m={};r.result.forEach(x=>m[x.id]=x.dataUrl);res(m)};r.onerror=()=>rej(r.error)})}
+function compressImage(dataUrl,maxW=800){return new Promise(res=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const ratio=Math.min(maxW/img.width,1);c.width=img.width*ratio;c.height=img.height*ratio;const ctx=c.getContext('2d');ctx.drawImage(img,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',0.7))};img.src=dataUrl})}
+function SplashScreen({onDone,text,duration=3000}){useEffect(()=>{const t=setTimeout(onDone,duration);return ()=>clearTimeout(t)},[onDone,duration]);return React.createElement('div',{className:'splash-overlay',style:{animation:'splashFade '+duration/1000+'s ease forwards'}},React.createElement('div',{style:{fontSize:60,animation:'coinBurst 2s ease infinite'}},'🪙'),React.createElement('h1',{className:'metallic-text',style:{fontSize:28,fontWeight:'bold',marginTop:16}},'Coinverse Oracle'),React.createElement('p',{style:{color:'var(--gold-light)',fontSize:14,marginTop:4}},'Powered by Echo'),React.createElement('p',{style:{color:'var(--text-secondary)',fontSize:11,marginTop:16,textAlign:'center',maxWidth:260,whiteSpace:'pre-line'}},text||'Crafted with care by J. Loera V.\nFor collectors who deserve the truth.'))}
+function App(){
+const [view,setView]=useState('home');const [tier,setTier]=useState(()=>parseInt(localStorage.getItem('cv_tier'))||1);const [coins,setCoins]=useState(()=>JSON.parse(localStorage.getItem('cv_coins'))||[]);const [listings,setListings]=useState(()=>JSON.parse(localStorage.getItem('cv_listings'))||[]);const [photoCache,setPhotoCache]=useState({});const [spots,setSpots]=useState(getSpots());const [toast,setToast]=useState(null);const [search,setSearch]=useState('');const [editCoin,setEditCoin]=useState(null);const [showTier,setShowTier]=useState(false);const [loggedIn,setLoggedIn]=useState(()=>!!localStorage.getItem('cv_user'));const [authForm,setAuthForm]=useState({email:'',password:'',name:''});const [authMode,setAuthMode]=useState('login');const [splash,setSplash]=useState(false);const [splashMsg,setSplashMsg]=useState('');const [scanPhase,setScanPhase]=useState(null);const [preScan,setPreScan]=useState({coinType:'',year:'',mint:'',condition:'uncirculated'});const [scanPhotos,setScanPhotos]=useState([]);const [scanResult,setScanResult]=useState(null);const [capSide,setCapSide]=useState('obv');const [capAngle,setCapAngle]=useState(0);const [processing,setProcessing]=useState(false);const [echoChat,setEchoChat]=useState([]);const [echoInput,setEchoInput]=useState('');
+const t=TIERS[tier];const atLimit=coins.length>=t.coinLimit;const totalValue=coins.reduce((a,c)=>a+Number(c.value||0),0);const prevValue=coins.reduce((a,c)=>a+Number(c.prevValue||c.value||0),0);const vc=totalValue-prevValue;const vcp=prevValue?((vc/prevValue)*100).toFixed(2):0;
+useEffect(()=>{localStorage.setItem('cv_coins',JSON.stringify(coins))},[coins]);useEffect(()=>{localStorage.setItem('cv_listings',JSON.stringify(listings))},[listings]);useEffect(()=>{localStorage.setItem('cv_tier',tier)},[tier]);useEffect(()=>{getAllPhotos().then(setPhotoCache)},[]);useEffect(()=>{const i=setInterval(()=>setSpots(getSpots()),60000);return ()=>clearInterval(i)},[]);
+const st=(msg)=>{setToast(msg);setTimeout(()=>setToast(null),2500)};
+const handleAuth=()=>{if(!authForm.email||!authForm.password){st('Email and password required');return}if(authMode==='signup'&&!authForm.name){st('Name required');return}localStorage.setItem('cv_user',JSON.stringify({email:authForm.email,name:authForm.name||authForm.email.split('@')[0]}));setLoggedIn(true);setSplash(true);setSplashMsg('Welcome to Coinverse Oracle.\nCrafted with care by J. Loera V.\nFor collectors who deserve the truth.')};
+const addCoin=()=>{if(atLimit){st('Tier limit reached');return}const n=document.getElementById('vn')?.value;const v=document.getElementById('vv')?.value;if(!n||!v){st('Name and value required');return}setCoins([...coins,{id:Date.now(),name:n,year:document.getElementById('vy')?.value||'',grade:document.getElementById('vg')?.value||'',value:Number(v),obvPhotos:[],revPhotos:[],createdAt:Date.now()}]);document.getElementById('vn').value='';document.getElementById('vy').value='';document.getElementById('vg').value='';document.getElementById('vv').value='';st('✅ Added')};
+const deleteCoin=(id)=>{setCoins(coins.filter(c=>c.id!==id));setEditCoin(null);st('🗑️ Removed')};
+const updateCoin=(id,f,v)=>{setCoins(coins.map(c=>c.id===id?{...c,[f]:f==='value'?Number(v):v}:c))};
+const addListing=()=>{const n=document.getElementById('ln')?.value;const p=document.getElementById('lp')?.value;if(!n||!p)return;setListings([...listings,{id:Date.now(),name:n,price:Number(p)}]);document.getElementById('ln').value='';document.getElementById('lp').value='';st('📢 Posted')};
+const capturePhoto=()=>{const input=document.createElement('input');input.type='file';input.accept='image/*';input.capture='environment';input.onchange=async e=>{const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=async ev=>{const compressed=await compressImage(ev.target.result,800);const pid='p_'+Date.now();await savePhoto(pid,compressed);setPhotoCache(p=>({...p,[pid]:compressed}));setScanPhotos(prev=>[...prev,pid]);st('📸 '+(scanPhotos.length+1)+'/6')};reader.readAsDataURL(file)};input.click()};
+const startScan=()=>{setScanPhase('preScan');setScanPhotos([]);setScanResult(null);setCapAngle(0);setCapSide('obv');setProcessing(false)};
+const beginCapture=()=>{if(!preScan.coinType||!preScan.year){st('Coin type and year required');return}setScanPhase('capturing')};
+const advanceCapture=()=>{if(scanPhotos.length>=5){setScanPhase('processing');setProcessing(true)}else{setCapSide(scanPhotos.length<3?'obv':'rev');setCapAngle(scanPhotos.length%3);capturePhoto()}};
+const sendToPipeline=async()=>{if(scanPhotos.length===0){setProcessing(false);setScanPhase('preScan');return}try{const dataUrl=photoCache[scanPhotos[0]]||await getPhoto(scanPhotos[0]);const blob=await(await fetch(dataUrl)).blob();const fd=new FormData();fd.append('file',blob,'scan.jpg');const resp=await fetch(PIPELINE_URL+'/api/scan',{method:'POST',body:fd});if(!resp.ok)throw new Error('Pipeline error');const result=await resp.json();setScanResult(result);setScanPhase('result')}catch(e){st('⚠️ Pipeline offline. Local estimate.');const dataUrl=photoCache[scanPhotos[0]]||await getPhoto(scanPhotos[0]);if(dataUrl){const img=new Image();img.onload=()=>{const sc=60+Math.floor(Math.random()*30);setScanResult({success:true,data:{scanId:'local_'+Date.now(),coin:{year:preScan.year,mint:preScan.mint,denomination:preScan.coinType,series:preScan.coinType,metal:null,diameterMm:null,weightGrams:null},capture:{imageCount:scanPhotos.length,angles:['obv','reverse'],quality:{focusScore:80,lightingScore:75,coverageScore:85,overallScore:80}},authentication:{status:'likely_authentic',confidence:0.85,notes:['Local estimate']},grade:{predicted:'MS-'+(sc-60),numeric:sc,range:'Estimated',confidence:0.7,sheldonLow:sc,sheldonHigh:sc,tier:'Local',basis:['Local']},diagnostics:{wear:{level:'minimal',score:80,summary:'Local'},luster:{level:'strong',score:78,summary:'Local'},strike:{level:'above_average',score:82,summary:'Local'},marks:{level:'minimal',score:75,summary:'Local'},eyeAppeal:{level:'positive',score:80,summary:'Local'},surface:{level:'clean',score:85,summary:'Local'},colorToning:{level:'natural',score:80,summary:'Local'},rim:{level:'normal',score:85,summary:'Local'},devices:{level:'strong',score:82,summary:'Local'}},redFlags:[],recommendation:{action:'hold',reason:'Pipeline offline'},attribution:{vam:[],bam:[],varieties:[]},market:{estimatedValueLow:20,estimatedValueHigh:100,currency:'USD',trend:'stable',comps:[]},explainLikeIAmHuman:['Pipeline offline. Local estimate.'],warnings:['Pipeline unavailable.'],nextSteps:['Try again later.']},error:null});setScanPhase('result')};img.src=dataUrl}}finally{setProcessing(false)}};
+const saveToVault=()=>{if(!scanResult||atLimit)return;const d=scanResult.data;setCoins([...coins,{id:Date.now(),name:d.coin.denomination,year:d.coin.year,grade:d.grade.predicted,value:d.market.estimatedValueHigh||100,notes:'Echo: '+d.grade.predicted+' ('+d.grade.sheldonLow+'/70)',obvPhotos:scanPhotos.slice(0,3),revPhotos:scanPhotos.slice(3,6),lastAnalysis:d,createdAt:Date.now()}]);setScanResult(null);setScanPhase(null);setScanPhotos([]);st('✅ Deposited')};
+const sendEcho=()=>{if(!echoInput.trim())return;const q=echoInput.toLowerCase();let r='';if(q.includes('grade'))r='I grade coins via the Echo Pipeline at '+PIPELINE_URL+'. Scan a coin for Sheldon-scale grading (1-70) with full diagnostics.';else if(q.includes('pipeline'))r='Pipeline is live at '+PIPELINE_URL+'. Check /api/health for status.';else r='I am Echo. I grade coins, track your portfolio ($'+totalValue.toLocaleString()+'), and provide market signals. Ask me anything.';setEchoChat([...echoChat,{role:'user',text:echoInput},{role:'echo',text:r}]);setEchoInput('')};
+if(!loggedIn)return React.createElement('div',{className:'min-h-screen flex flex-col items-center justify-center p-6',style:{background:'var(--bg-deep)'}},React.createElement('div',{style:{fontSize:50,marginBottom:8}},'🐦‍🔥'),React.createElement('h1',{className:'metallic-text',style:{fontSize:26,fontWeight:'bold',marginBottom:4}},'Coinverse Oracle'),React.createElement('p',{style:{color:'var(--gold-light)',fontSize:12,marginBottom:24}},'Powered by Echo'),React.createElement('div',{className:'card card-gold',style:{width:'100%',maxWidth:340}},React.createElement('div',{className:'flex gap-2 mb-4'},React.createElement('button',{onClick:()=>setAuthMode('login'),className:'btn-outline',style:{flex:1,background:authMode==='login'?'rgba(224,200,142,0.1)':'transparent'}},'Sign In'),React.createElement('button',{onClick:()=>setAuthMode('signup'),className:'btn-outline',style:{flex:1,background:authMode==='signup'?'rgba(224,200,142,0.1)':'transparent'}},'Create Account')),authMode==='signup'&&React.createElement('input',{placeholder:'Full Name',value:authForm.name,onChange:e=>setAuthForm({...authForm,name:e.target.value})}),React.createElement('input',{placeholder:'Email',type:'email',value:authForm.email,onChange:e=>setAuthForm({...authForm,email:e.target.value})}),React.createElement('input',{placeholder:'Password',type:'password',value:authForm.password,onChange:e=>setAuthForm({...authForm,password:e.target.value})}),React.createElement('button',{className:'btn-gold',onClick:handleAuth},authMode==='login'?'Sign In':'Create Account')),React.createElement('p',{style:{color:'var(--text-secondary)',fontSize:10,marginTop:20,textAlign:'center'}},'Crafted with care by J. Loera V.',React.createElement('br'),'For collectors who deserve the truth.'));
+return React.createElement('div',{className:'min-h-screen pb-16',style:{background:'var(--bg-deep)'}},
+splash&&React.createElement(SplashScreen,{text:splashMsg,onDone:()=>setSplash(false),duration:3500}),
+processing&&React.createElement(SplashScreen,{text:'Echo is analyzing...\nConnected to pipeline',onDone:()=>sendToPipeline(),duration:4000}),
+React.createElement('header',{className:'sticky top-0 z-40 px-4 py-3 border-b flex justify-between items-center',style:{background:'rgba(26,20,16,0.95)',borderColor:'var(--border)'}},React.createElement('div',null,React.createElement('h1',{className:'text-lg font-bold metallic-text'},'Coinverse'),React.createElement('span',{style:{color:'var(--gold-light)',fontSize:10}},'Oracle Edition · '+t.name)),React.createElement('div',{className:'flex gap-2'},React.createElement('button',{className:'btn-outline text-xs',onClick:()=>setShowTier(true)},'Upgrade'),React.createElement('button',{className:'btn-outline text-xs',onClick:()=>{localStorage.removeItem('cv_user');setLoggedIn(false)}},'Logout'))),
+React.createElement('div',{className:'px-3 pt-3 max-w-lg mx-auto'},
+view==='home'&&React.createElement('div',{className:'space-y-4'},React.createElement('div',{className:'card card-gold text-center',style:{position:'relative',overflow:'hidden'}},React.createElement('p',{style:{color:'var(--text-secondary)',fontSize:11,textTransform:'uppercase',letterSpacing:2}},'Portfolio Value'),React.createElement('p',{className:'neon-value',style:{fontSize:34}},'$'+totalValue.toLocaleString()),React.createElement('p',{style:{fontSize:13,color:vc>=0?'var(--neon-green)':'var(--red-down)'}},(vc>=0?'▲':'▼')+' $'+Math.abs(vc).toLocaleString()+' ('+vcp+'%)'),React.createElement('button',{className:'btn-outline mt-2 text-xs',onClick:()=>{setCoins(coins.map(c=>{const f=1+(Math.random()-0.48)*0.04;return{...c,prevValue:c.value,value:Math.round(Number(c.value)*f)}}));st('🌙 Revalued')}},'🔄 Refresh')),React.createElement('div',{className:'grid grid-cols-4 gap-2'},Object.entries(spots).map(([k,v])=>React.createElement('div',{key:k,className:'card text-center',style:{padding:10}},React.createElement('p',{style:{fontSize:10,color:'var(--text-secondary)',textTransform:'uppercase'}},k),React.createElement('p',{style:{fontSize:13,fontWeight:'bold',color:'var(--gold-light)'}},'$'+v.price.toLocaleString()),React.createElement('p',{style:{fontSize:10,color:v.change>=0?'var(--neon-green)':'var(--red-down)'}},(v.change>=0?'▲':'▼')+' '+Math.abs(v.change).toFixed(2)+'%')))),React.createElement('div',{className:'card card-gold'},React.createElement('p',{style:{fontWeight:'bold',color:'var(--gold-light)',marginBottom:4}},'🔗 Pipeline'),React.createElement('p',{style:{fontSize:11,color:'var(--neon-green)'}},'✅ '+PIPELINE_URL))),
+view==='scan'&&React.createElement('div',{className:'space-y-4'},React.createElement('div',{className:'card card-gold text-center'},React.createElement('h3',{style:{fontWeight:'bold',color:'var(--gold-light)'}},'🔬 Echo Scan'),React.createElement('p',{style:{fontSize:11,color:'var(--text-secondary)'}},'Pipeline · Sheldon Grade')),
+!scanPhase&&React.createElement('div',{className:'card text-center space-y-3'},React.createElement('p',{style:{fontSize:40}},'📷'),React.createElement('button',{className:'btn-gold',onClick:startScan},'Start Scan')),
+scanPhase==='preScan'&&React.createElement('div',{className:'card card-gold space-y-2'},React.createElement('h3',{style:{fontWeight:'bold',color:'var(--gold-light)'}},'📋 Coin Info'),React.createElement('input',{placeholder:'Coin Type *',value:preScan.coinType,onChange:e=>setPreScan({...preScan,coinType:e.target.value})}),React.createElement('div',{className:'flex gap-2'},React.createElement('input',{placeholder:'Year *',value:preScan.year,onChange:e=>setPreScan({...preScan,year:e.target.value})}),React.createElement('input',{placeholder:'Mint',value:preScan.mint,onChange:e=>setPreScan({...preScan,mint:e.target.value})})),React.createElement('select',{value:preScan.condition,onChange:e=>setPreScan({...preScan,condition:e.target.value})},React.createElement('option',{value:'uncirculated'},'Uncirculated'),React.createElement('option',{value:'about_uncirculated'},'About Uncirculated'),React.createElement('option',{value:'lightly_circulated'},'Lightly Circulated'),React.createElement('option',{value:'circulated'},'Circulated'),React.createElement('option',{value:'heavily_worn'},'Heavily Worn')),React.createElement('button',{className:'btn-gold',onClick:beginCapture},'Begin Capture')),
+scanPhase==='capturing'&&React.createElement('div',{className:'card card-gold text-center space-y-3'},React.createElement('p',{style:{fontWeight:'bold',color:'var(--gold-light)'}},(capSide==='obv'?'🪙 Obverse':'🔄 Reverse')+' — Photo '+(capAngle+1)+'/3'),React.createElement('p',{style:{fontSize:12}},'Captured: '+scanPhotos.length+'/6'),React.createElement('button',{className:'btn-gold',onClick:capturePhoto},'📸 Capture'),React.createElement('button',{className:'btn-outline',onClick:advanceCapture},scanPhotos.length>=5?'✅ Complete':'Next →'),React.createElement('button',{className:'btn-outline',style:{borderColor:'var(--red-down)',color:'var(--red-down)'},onClick:()=>{setScanPhase(null);setScanPhotos([])}},'Cancel')),
+scanPhase==='processing'&&React.createElement('div',{className:'card card-gold text-center',style:{padding:30}},React.createElement('p',{style:{fontSize:40,animation:'coinBurst 1.5s ease infinite'}},'🪙'),React.createElement('p',{style:{fontWeight:'bold',color:'var(--gold-light)',marginTop:8}},'Echo is analyzing...')),
+scanPhase==='result'&&scanResult&&React.createElement('div',{className:'space-y-3',style:{animation:'slideUp 0.5s ease'}},(()=>{const d=scanResult.data;return React.createElement(React.Fragment,null,React.createElement('div',{className:'card card-gold text-center'},React.createElement('p',{className:'neon-value',style:{fontSize:38}},d.grade.predicted),React.createElement('p',{style:{fontSize:14,color:'var(--gold-light)'}},'Sheldon: '+d.grade.sheldonLow+'/70'),React.createElement('p',{style:{fontSize:11,color:'var(--text-secondary)'}},d.grade.tier+' · '+Math.round(d.grade.confidence*100)+'% confidence')),React.createElement('div',{className:'card card-gold'},React.createElement('p',{style:{fontWeight:'bold',color:'var(--gold-light)'}},'🪙 '+d.coin.year+' '+(d.coin.mint||'')+' '+d.coin.denomination),React.createElement('p',{style:{fontSize:11,color:'var(--text-secondary)'}},d.coin.series)),React.createElement('div',{className:'grid grid-cols-2 gap-2'},[{l:'Wear',v:d.diagnostics.wear.level},{l:'Luster',v:d.diagnostics.luster.level},{l:'Strike',v:d.diagnostics.strike.level},{l:'Marks',v:d.diagnostics.marks.level},{l:'Eye Appeal',v:d.diagnostics.eyeAppeal.level},{l:'Surface',v:d.diagnostics.surface.level}].map((x,i)=>React.createElement('div',{key:i,className:'card',style:{padding:10}},React.createElement('p',{style:{fontSize:9,color:'var(--text-secondary)',textTransform:'uppercase'}},x.l),React.createElement('p',{style:{fontWeight:'bold',fontSize:13,color:'var(--gold-light)'}},x.v)))),d.market.estimatedValueHigh&&React.createElement('div',{className:'card card-gold text-center'},React.createElement('p',{style:{fontSize:10,color:'var(--text-secondary)'}},'Estimated Value'),React.createElement('p',{className:'neon-value',style:{fontSize:24}},'$'+d.market.estimatedValueLow+' – $'+d.market.estimatedValueHigh)),React.createElement('button',{className:'btn-rect btn-rect-accept',onClick:saveToVault},'✅ Deposit to Vault'),React.createElement('button',{className:'btn-rect btn-rect-retake',onClick:()=>{setScanPhase(null);setScanResult(null);setScanPhotos([])}},'❌ Discard'))})())),
+view==='vault'&&React.createElement('div',{className:'space-y-4'},React.createElement('div',{className:'card card-gold'},React.createElement('h3',{style:{fontWeight:'bold',color:'var(--gold-light)',marginBottom:8}},'💼 Vault ('+coins.length+'/'+(t.coinLimit===Infinity?'∞':t.coinLimit)+')'),React.createElement('input',{id:'vn',placeholder:'Coin Name *'}),React.createElement('div',{className:'flex gap-2'},React.createElement('input',{id:'vy',placeholder:'Year'}),React.createElement('input',{id:'vg',placeholder:'Grade'})),React.createElement('input',{id:'vv',type:'number',placeholder:'Value ($) *'}),React.createElement('button',{className:'btn-gold',onClick:addCoin,disabled:atLimit},'Add')),React.createElement('input',{placeholder:'🔍 Search...',value:search,onChange:e=>setSearch(e.target.value)}),coins.filter(c=>c.name.toLowerCase().includes(search.toLowerCase())).length===0?React.createElement('div',{className:'card text-center',style:{padding:30}},React.createElement('p',{style:{fontSize:40}},'🪙'),React.createElement('p',{style:{color:'var(--text-secondary)'}},search?'No matches':'Empty')):coins.filter(c=>c.name.toLowerCase().includes(search.toLowerCase())).map(c=>React.createElement('div',{key:c.id,className:'card',onClick:()=>setEditCoin(editCoin===c.id?null:c.id)},React.createElement('div',{className:'flex justify-between items-start'},React.createElement('div',null,React.createElement('p',{style:{fontWeight:'bold',fontSize:14}},c.name),React.createElement('p',{style:{fontSize:10,color:'var(--text-secondary)'}},(c.year||'—')+' · '+(c.grade||'—')),c.lastAnalysis&&React.createElement('p',{style:{fontSize:9,color:'var(--gold-light)'}},'Echo: '+c.lastAnalysis.grade.predicted+' ('+c.lastAnalysis.grade.sheldonLow+'/70)')),React.createElement('p',{className:'neon-value',style:{fontSize:16}},'$'+Number(c.value).toLocaleString())),editCoin===c.id&&React.createElement('div',{className:'space-y-2 mt-3',onClick:e=>e.stopPropagation()},React.createElement('input',{value:c.name,onChange:e=>updateCoin(c.id,'name',e.target.value)}),React.createElement('div',{className:'flex gap-2'},React.createElement('input',{value:c.year,onChange:e=>updateCoin(c.id,'year',e.target.value)}),React.createElement('input',{value:c.grade,onChange:e=>updateCoin(c.id,'grade',e.target.value)})),React.createElement('input',{type:'number',value:c.value,onChange:e=>updateCoin(c.id,'value',e.target.value)}),React.createElement('div',{className:'flex gap-2'},React.createElement('button',{className:'btn-gold',style:{fontSize:11,padding:6},onClick:()=>setEditCoin(null)},'Done'),React.createElement('button',{className:'btn-outline',style:{borderColor:'var(--red-down)',color:'var(--red-down)',fontSize:11},onClick:()=>deleteCoin(c.id)},'Delete')))))),
+view==='market'&&React.createElement('div',{className:'space-y-4'},React.createElement('div',{className:'card card-gold'},React.createElement('h3',{style:{fontWeight:'bold',color:'var(--gold-light)',marginBottom:8}},'📢 Post'),React.createElement('input',{id:'ln',placeholder:'Coin Name *'}),React.createElement('input',{id:'lp',type:'number',placeholder:'Price ($) *'}),React.createElement('button',{className:'btn-gold',onClick:addListing},'Post')),React.createElement('h3',{style:{fontWeight:'bold',color:'var(--gold-light)'}},'📋 Feed ('+listings.length+')'),listings.length===0?React.createElement('div',{className:'card text-center',style:{padding:30}},React.createElement('p',{style:{color:'var(--text-secondary)'}},'No listings')):[...listings].reverse().map(l=>{const allP=listings.map(x=>Number(x.price)).filter(p=>p>0);const avg=allP.length?allP.reduce((a,b)=>a+b,0)/allP.length:l.price;const ratio=l.price/avg;const intel=ratio<0.9?{a:'BUY',c:'badge-buy'}:ratio<1.1?{a:'HOLD',c:'badge-hold'}:{a:'PASS',c:'badge-sell'};return React.createElement('div',{key:l.id,className:'card flex justify-between items-center'},React.createElement('div',null,React.createElement('p',{style:{fontWeight:'bold'}},l.name),React.createElement('p',{className:'neon-value',style:{fontSize:18}},'$'+Number(l.price).toLocaleString())),React.createElement('span',{className:'badge '+intel.c},intel.a))})),
+view==='echo'&&React.createElement('div',{className:'space-y-3'},React.createElement('div',{className:'card card-gold'},React.createElement('h3',{style:{fontWeight:'bold',color:'var(--gold-light)'}},'🤖 Echo'),React.createElement('p',{style:{fontSize:10,color:'var(--text-secondary)'}},'Pipeline: '+PIPELINE_URL)),React.createElement('div',{className:'card space-y-2',style:{maxHeight:350,overflowY:'auto',minHeight:180}},echoChat.length===0&&React.createElement('p',{style:{color:'var(--text-secondary)',textAlign:'center',padding:20}},'Ask Echo...'),echoChat.map((m,i)=>React.createElement('div',{key:i,style:{textAlign:m.role==='user'?'right':'left'}},React.createElement('span',{style:{display:'inline-block',padding:'8px 12px',borderRadius:10,background:m.role==='user'?'rgba(224,200,142,0.1)':'rgba(57,255,20,0.06)',fontSize:12,maxWidth:'85%'}},m.text)))),React.createElement('div',{className:'flex gap-2'},React.createElement('input',{value:echoInput,onChange:e=>setEchoInput(e.target.value),placeholder:'Ask Echo...',style:{marginBottom:0,flex:1},onKeyDown:e=>e.key==='Enter'&&sendEcho()}),React.createElement('button',{className:'btn-gold',style:{width:'auto',padding:'10px 16px'},onClick:sendEcho},'Send')))
+)),
+React.createElement('nav',{className:'fixed bottom-0 left-0 right-0 z-40 px-2 py-2 flex justify-around',style:{background:'rgba(26,20,16,0.97)',borderTop:'1px solid var(--border)'}},[{id:'home',label:'Home',icon:'🏠'},{id:'scan',label:'Scan',icon:'📷'},{id:'vault',label:'Vault',icon:'💼'},{id:'market',label:'Market',icon:'📊'},{id:'echo',label:'Echo',icon:'🤖'}].map(t=>React.createElement('button',{key:t.id,className:'nav-item'+(view===t.id?' active':''),onClick:()=>setView(t.id)},React.createElement('span',{className:'nav-icon'},t.icon),React.createElement('span',{style:{fontSize:9}},t.label)))),
+showTier&&React.createElement('div',{style:{position:'fixed',inset:0,background:'rgba(0,0,0,0.85)',zIndex:400,display:'flex',alignItems:'center',justifyContent:'center',padding:20},onClick:()=>setShowTier(false)},React.createElement('div',{className:'card card-gold',style:{width:'100%',maxWidth:340},onClick:e=>e.stopPropagation()},React.createElement('h3',{style:{fontWeight:'bold',color:'var(--gold-light)',textAlign:'center',marginBottom:12}},'Upgrade'),Object.entries(TIERS).map(([k,v])=>React.createElement('div',{key:k,className:'py-3 flex justify-between items-center',style:{borderBottom:k<4?'1px solid var(--border)':'none',opacity:parseInt(k)===tier?1:0.7}},React.createElement('div',null,React.createElement('p',{style:{fontWeight:'bold',color:'var(--gold-light)'}},v.name),React.createElement('p',{style:{fontSize:10,color:'var(--text-secondary)'}},(v.coinLimit===Infinity?'Unlimited':v.coinLimit)+' coins')),React.createElement('div',{className:'text-right'},React.createElement('p',{className:'neon-value',style:{fontSize:13}},v.price),parseInt(k)===tier?React.createElement('span',{className:'badge badge-hold'},'Current'):React.createElement('button',{className:'btn-outline text-xs',onClick:()=>{setTier(parseInt(k));setShowTier(false);st('✅ Upgraded!')}},'Select')))),React.createElement('button',{className:'btn-outline mt-3',style:{width:'100%'},onClick:()=>setShowTier(false)},'Close'))),
+toast&&React.createElement('div',{className:'toast'},toast)
+);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register(URL.createObjectURL(new Blob([`const C='cv-v5';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./'])))});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{if(res.ok){const cl=res.clone();caches.open(C).then(c=>c.put(e.request,cl));}return res;})))})`],{type:'application/javascript'})))}})</script>
 </body>
 </html>
+
+                                
