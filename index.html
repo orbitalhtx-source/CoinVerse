@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Coinverse</title>
+
+
+<!-- iOS meta tags -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Coinverse">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234f46e5'/><text x='50' y='65' text-anchor='middle' fill='white' font-size='50' font-family='sans-serif'>¢</text></svg>">
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="data:application/json,{ %22name%22: %22Coinverse%22, %22short_name%22: %22Coinverse%22, %22start_url%22: %22.%22, %22display%22: %22standalone%22, %22background_color%22: %220f172a%22, %22theme_color%22: %224f46e5%22, %22icons%22: [ { %22src%22: %22data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234f46e5'/><text x='50' y='65' text-anchor='middle' fill='white' font-size='50' font-family='sans-serif'>¢</text></svg>%22, %22sizes%22: %22100x100%22, %22type%22: %22image/svg+xml%22 } ] }">
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body {
+background-color: #0f172a;
+color: white;
+margin: 0;
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+overscroll-behavior-y: none;
+}
+.card {
+background: #1e293b;
+border: 1px solid #334155;
+border-radius: 12px;
+padding: 16px;
+}
+input, select {
+background: #0f172a;
+border: 1px solid #334155;
+color: white;
+padding: 10px;
+border-radius: 8px;
+width: 100%;
+margin-bottom: 10px;
+box-sizing: border-box;
+font-size: 16px;
+}
+input:focus, select:focus {
+outline: none;
+border-color: #6366f1;
+box-shadow: 0 0 0 2px rgba(99,102,241,0.3);
+}
+button {
+cursor: pointer;
+transition: all 0.15s;
+}
+button:active {
+transform: scale(0.97);
+}
+.btn-primary {
+background: #4f46e5;
+color: white;
+border: none;
+padding: 10px;
+border-radius: 8px;
+font-weight: bold;
+width: 100%;
+}
+.btn-primary:hover {
+background: #4338ca;
+}
+.btn-danger {
+background: transparent;
+border: 1px solid #ef4444;
+color: #ef4444;
+padding: 6px 12px;
+border-radius: 6px;
+font-size: 12px;
+}
+.btn-danger:hover {
+background: #ef4444;
+color: white;
+}
+.btn-sm {
+background: #334155;
+border: none;
+color: #94a3b8;
+padding: 4px 10px;
+border-radius: 6px;
+font-size: 11px;
+}
+.btn-sm:hover {
+background: #475569;
+color: white;
+}
+.empty-state {
+text-align: center;
+padding: 40px 20px;
+color: #64748b;
+}
+.empty-state-icon {
+font-size: 48px;
+margin-bottom: 12px;
+}
+.nav-btn {
+background: none;
+border: none;
+color: #94a3b8;
+font-size: 14px;
+font-weight: 600;
+padding: 8px 16px;
+border-radius: 8px;
+transition: all 0.15s;
+}
+.nav-btn.active {
+color: #a5b4fc;
+background: rgba(99,102,241,0.15);
+}
+.edit-input {
+background: #0f172a !important;
+border: 1px solid #6366f1 !important;
+padding: 6px 8px !important;
+margin-bottom: 0 !important;
+font-size: 14px !important;
+}
+.toast {
+position: fixed;
+bottom: 20px;
+left: 50%;
+transform: translateX(-50%);
+background: #1e293b;
+border: 1px solid #334155;
+padding: 12px 20px;
+border-radius: 10px;
+font-size: 14px;
+z-index: 100;
+animation: slideUp 0.3s ease;
+}
+@keyframes slideUp {
+from { bottom: 0; opacity: 0; }
+to { bottom: 20px; opacity: 1; }
+}
+</style>
+
+</head>
+<body>
+<div id="root"></div>
+
+
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+function CoinverseApp() {
+const [view, setView] = useState('dashboard');
+const [coins, setCoins] = useState(() => JSON.parse(localStorage.getItem('cv_coins')) || []);
+const [listings, setListings] = useState(() => JSON.parse(localStorage.getItem('cv_listings')) || []);
+const [search, setSearch] = useState('');
+const [editingCoin, setEditingCoin] = useState(null);
+const [editingListing, setEditingListing] = useState(null);
+const [toast, setToast] = useState(null);
+
+// Persist
+useEffect(() => {
+localStorage.setItem('cv_coins', JSON.stringify(coins));
+}, [coins]);
+useEffect(() => {
+localStorage.setItem('cv_listings', JSON.stringify(listings));
+}, [listings]);
+
+// Toast helper
+const showToast = (msg) => {
+setToast(msg);
+setTimeout(() => setToast(null), 2000);
+};
+
+const totalValue = coins.reduce((acc, c) => acc + Number(c.value || 0), 0);
+
+// Intel: based on price percentiles among listings
+const getIntel = (price) => {
+const allPrices = listings.map(l => Number(l.price)).filter(p => p > 0);
+if (allPrices.length < 3) return { score: 'N/A', action: 'HOLD', color: 'text-yellow-400' };
+const avg = allPrices.reduce((a,b) => a+b,0) / allPrices.length;
+const ratio = price / avg;
+if (ratio < 0.7) return { score: '9/10', action: 'BUY', color: 'text-emerald-400' };
+if (ratio < 0.9) return { score: '7/10', action: 'BUY', color: 'text-emerald-400' };
+if (ratio < 1.1) return { score: '5/10', action: 'HOLD', color: 'text-yellow-400' };
+if (ratio < 1.4) return { score: '3/10', action: 'PASS', color: 'text-red-400' };
+return { score: '1/10', action: 'PASS', color: 'text-red-400' };
+};
+
+const addCoin = (e) => {
+e.preventDefault();
+const fd = new FormData(e.target);
+setCoins([...coins, {
+id: Date.now(),
+name: fd.get('name'),
+year: fd.get('year'),
+grade: fd.get('grade'),
+value: Number(fd.get('value'))
+}]);
+e.target.reset();
+showToast('✅ Coin added!');
+};
+
+const updateCoin = (id, field, value) => {
+setCoins(coins.map(c => c.id === id ? { ...c, [field]: field === 'value' ? Number(value) : value } : c));
+};
+
+const deleteCoin = (id) => {
+setCoins(coins.filter(c => c.id !== id));
+setEditingCoin(null);
+showToast('🗑️ Coin removed');
+};
+
+const addListing = (e) => {
+e.preventDefault();
+const fd = new FormData(e.target);
+setListings([...listings, {
+id: Date.now(),
+name: fd.get('name'),
+price: Number(fd.get('price'))
+}]);
+e.target.reset();
+showToast('📢 Listing posted!');
+};
+
+const updateListing = (id, field, value) => {
+setListings(listings.map(l => l.id === id ? { ...l, [field]: field === 'price' ? Number(value) : value } : l));
+};
+
+const deleteListing = (id) => {
+setListings(listings.filter(l => l.id !== id));
+setEditingListing(null);
+showToast('🗑️ Listing removed');
+};
+
+const filteredCoins = coins.filter(c =>
+c.name.toLowerCase().includes(search.toLowerCase()) ||
+(c.year || '').includes(search) ||
+(c.grade || '').toLowerCase().includes(search.toLowerCase())
+);
+
+return (
+<div className="min-h-screen pb-20">
+{/* Navigation */}
+<nav className="p-4 border-b border-slate-800 flex justify-between items-center sticky top-0 bg-slate-900/90 backdrop-blur z-50">
+<h1 className="text-xl font-bold text-indigo-400">🪙 Coinverse</h1>
+<div className="flex gap-1">
+<button className={`nav-btn ${view === 'dashboard' ? 'active' : ''}`} onClick={() => setView('dashboard')}>Dash</button>
+<button className={`nav-btn ${view === 'portfolio' ? 'active' : ''}`} onClick={() => setView('portfolio')}>Portfolio</button>
+<button className={`nav-btn ${view === 'market' ? 'active' : ''}`} onClick={() => setView('market')}>Market</button>
+</div>
+</nav>
+
+<div className="p-4 max-w-md mx-auto">
+{/* Dashboard */}
+{view === 'dashboard' && (
+<div className="space-y-6">
+<div className="grid grid-cols-2 gap-3">
+<div className="card text-center">
+<p className="text-slate-400 text-xs uppercase tracking-wide">Total Coins</p>
+<p className="text-3xl font-bold">{coins.length}</p>
+</div>
+<div className="card text-center border-indigo-500/40">
+<p className="text-slate-400 text-xs uppercase tracking-wide">Portfolio Value</p>
+<p className="text-3xl font-bold text-emerald-400">${totalValue.toLocaleString()}</p>
+</div>
+</div>
+
+{listings.length > 0 && (
+<div className="card">
+<h3 className="font-bold mb-3">📊 Market Intel</h3>
+<p className="text-slate-400 text-sm mb-2">Based on {listings.length} active listing{listings.length > 1 ? 's' : ''}</p>
+<div className="text-sm space-y-1">
+<p>Avg listing price: <span className="text-emerald-400 font-mono">
+${(listings.reduce((a,l) => a + Number(l.price), 0) / listings.length).toFixed(0)}
+</span></p>
+<p>Most recent: <span className="text-indigo-300">{listings[listings.length-1]?.name || '—'}</span></p>
+</div>
+</div>
+)}
+
+<div className="card">
+<h3 className="font-bold mb-3">🕐 Recent Coins</h3>
+{coins.length === 0 ? (
+<div className="empty-state">
+<div className="empty-state-icon">🪙</div>
+<p>No coins yet</p>
+<p className="text-xs">Head to Portfolio to start your collection</p>
+</div>
+) : (
+coins.slice(-3).reverse().map(c => (
+<div key={c.id} className="flex justify-between border-b border-slate-700 py-3 last:border-0">
+<span>{c.name} <span className="text-slate-500 text-xs">({c.year})</span></span>
+<span className="font-mono text-emerald-400 font-semibold">${Number(c.value).toLocaleString()}</span>
+</div>
+))
+)}
+</div>
+</div>
+)}
+
+{/* Portfolio */}
+{view === 'portfolio' && (
+<div className="space-y-6">
+<form onSubmit={addCoin} className="card">
+<h3 className="font-bold mb-3">➕ Add Coin</h3>
+<input name="name" placeholder="Coin Name *" required />
+<div className="flex gap-2">
+<input name="year" placeholder="Year (e.g. 1881)" />
+<input name="grade" placeholder="Grade (e.g. MS65)" />
+</div>
+<input name="value" type="number" placeholder="Value ($) *" required />
+<button type="submit" className="btn-primary">Add to Collection</button>
+</form>
+
+<div className="flex items-center gap-2">
+<h3 className="font-bold flex-1">💼 Your Assets ({coins.length})</h3>
+{coins.length > 0 && (
+<input
+placeholder="🔍 Search..."
+value={search}
+onChange={(e) => setSearch(e.target.value)}
+style={{ width: '140px', marginBottom: 0, padding: '8px 10px', fontSize: '13px' }}
+/>
+)}
+</div>
+
+{filteredCoins.length === 0 ? (
+<div className="empty-state">
+<div className="empty-state-icon">{search ? '🔍' : '📭'}</div>
+<p>{search ? 'No coins match your search' : 'Your collection is empty'}</p>
+<p className="text-xs">{search ? 'Try a different term' : 'Use the form above to add your first coin'}</p>
+</div>
+) : (
+<div className="space-y-2">
+{filteredCoins.map(c => (
+<div key={c.id} className="card relative">
+{editingCoin === c.id ? (
+<div className="space-y-2">
+<div className="flex gap-2">
+<input className="edit-input" value={c.name} onChange={(e) => updateCoin(c.id, 'name', e.target.value)} placeholder="Name" />
+<input className="edit-input" value={c.year} onChange={(e) => updateCoin(c.id, 'year', e.target.value)} placeholder="Year" />
+</div>
+<div className="flex gap-2">
+<input className="edit-input" value={c.grade} onChange={(e) => updateCoin(c.id, 'grade', e.target.value)} placeholder="Grade" />
+<input className="edit-input" type="number" value={c.value} onChange={(e) => updateCoin(c.id, 'value', e.target.value)} placeholder="Value" />
+</div>
+<div className="flex gap-2 mt-1">
+<button className="btn-sm" style={{background:'#4f46e5', color:'white'}} onClick={() => setEditingCoin(null)}>Done</button>
+<button className="btn-danger" onClick={() => deleteCoin(c.id)}>Delete</button>
+</div>
+</div>
+) : (
+<div className="flex justify-between items-center" onClick={() => setEditingCoin(c.id)}>
+<div>
+<p className="font-bold">{c.name}</p>
+<p className="text-xs text-slate-400">{c.year || '—'} • {c.grade || '—'}</p>
+</div>
+<div className="flex items-center gap-3">
+<p className="text-xl font-bold text-emerald-400">${Number(c.value).toLocaleString()}</p>
+<span className="text-slate-600 text-xs">✎</span>
+</div>
+</div>
+)}
+</div>
+))}
+</div>
+)}
+</div>
+)}
+
+{/* Market */}
+{view === 'market' && (
+<div className="space-y-6">
+<form onSubmit={addListing} className="card">
+<h3 className="font-bold mb-3">📢 List a Coin</h3>
+<input name="name" placeholder="Coin Name *" required />
+<input name="price" type="number" placeholder="Price ($) *" required />
+<button type="submit" className="btn-primary" style={{background: '#059669'}}>Post Listing</button>
+</form>
+
+<h3 className="font-bold">📋 Market Feed ({listings.length})</h3>
+
+{listings.length === 0 ? (
+<div className="empty-state">
+<div className="empty-state-icon">🏪</div>
+<p>No listings yet</p>
+<p className="text-xs">Be the first to list a coin for sale</p>
+</div>
+) : (
+<div className="space-y-3">
+{[...listings].reverse().map(l => {
+const intel = getIntel(l.price);
+return (
+<div key={l.id} className="card">
+{editingListing === l.id ? (
+<div className="space-y-2">
+<div className="flex gap-2">
+<input className="edit-input" value={l.name} onChange={(e) => updateListing(l.id, 'name', e.target.value)} placeholder="Name" />
+<input className="edit-input" type="number" value={l.price} onChange={(e) => updateListing(l.id, 'price', e.target.value)} placeholder="Price" />
+</div>
+<div className="flex gap-2 mt-1">
+<button className="btn-sm" style={{background:'#4f46e5', color:'white'}} onClick={() => setEditingListing(null)}>Done</button>
+<button className="btn-danger" onClick={() => deleteListing(l.id)}>Delete</button>
+</div>
+</div>
+) : (
+<div className="flex justify-between items-start" onClick={() => setEditingListing(l.id)}>
+<div>
+<h4 className="font-bold">{l.name}</h4>
+<p className="text-2xl font-black">${Number(l.price).toLocaleString()}</p>
+</div>
+<div className="flex items-center gap-2">
+<div className={`text-[10px] px-2 py-1 rounded border font-bold ${intel.color} bg-slate-800/80 border-slate-600`}>
+{intel.action} {intel.score}
+</div>
+<span className="text-slate-600 text-xs">✎</span>
+</div>
+</div>
+)}
+</div>
+);
+})}
+</div>
+)}
+</div>
+)}
+</div>
+
+{/* Toast notification */}
+{toast && <div className="toast">{toast}</div>}
+</div>
+);
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<CoinverseApp />);
+</script>
+
+<!-- Service Worker for PWA (offline support) -->
+<script>
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+navigator.serviceWorker.register(
+URL.createObjectURL(
+new Blob([`
+const CACHE = 'coinverse-v1';
+self.addEventListener('install', e => {
+e.waitUntil(
+caches.open(CACHE).then(cache =>
+cache.addAll(['./'])
+)
+);
+});
+self.addEventListener('fetch', e => {
+e.respondWith(
+caches.match(e.request).then(resp =>
+resp || fetch(e.request).then(response => {
+if(response.ok) {
+const clone = response.clone();
+caches.open(CACHE).then(cache => cache.put(e.request, clone));
+}
+return response;
+})
+)
+);
+});
+`], { type: 'application/javascript' })
+)
+);
+});
+}
+</script>
+
+</body>
+</html>
+
+Sent from my iPhone
+Show quoted text
