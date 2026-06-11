@@ -4,471 +4,951 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Coinverse</title>
-
-
-<!-- iOS meta tags -->
+<title>Coinverse Oracle</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Coinverse">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234f46e5'/><text x='50' y='65' text-anchor='middle' fill='white' font-size='50' font-family='sans-serif'>¢</text></svg>">
-
-<!-- PWA Manifest -->
-<link rel="manifest" href="data:application/json,{ %22name%22: %22Coinverse%22, %22short_name%22: %22Coinverse%22, %22start_url%22: %22.%22, %22display%22: %22standalone%22, %22background_color%22: %220f172a%22, %22theme_color%22: %224f46e5%22, %22icons%22: [ { %22src%22: %22data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234f46e5'/><text x='50' y='65' text-anchor='middle' fill='white' font-size='50' font-family='sans-serif'>¢</text></svg>%22, %22sizes%22: %22100x100%22, %22type%22: %22image/svg+xml%22 } ] }">
-
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%23d4a017'/><stop offset='100%' style='stop-color:%23e8d5a3'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='64' text-anchor='middle' fill='%231a1410' font-size='46' font-weight='bold' font-family='serif'>¢</text></svg>">
+<link rel="manifest" href="data:application/json,{%22name%22:%22Coinverse%20Oracle%22,%22short_name%22:%22Coinverse%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%221a1410%22,%22theme_color%22:%22d4a017%22}">
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
+:root {
+--bg-deep: #1a1410;
+--bg-card: #231e18;
+--gold: #d4a017;
+--gold-light: #e8d5a3;
+--silver-sheen: #c0c0c0;
+--neon-green: #39ff14;
+--red-down: #ff4444;
+--border: #3a3025;
+--text-primary: #f0e6d3;
+--text-secondary: #a3967c;
+}
+* { box-sizing: border-box; }
 body {
-background-color: #0f172a;
-color: white;
 margin: 0;
-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+font-family: 'Georgia', 'Times New Roman', serif;
+background: var(--bg-deep);
+color: var(--text-primary);
 overscroll-behavior-y: none;
+-webkit-font-smoothing: antialiased;
+}
+.metallic-text {
+background: linear-gradient(135deg, #d4a017 0%, #f0e6c0 25%, #e8d5a3 50%, #c0c0c0 75%, #d4a017 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+background-size: 300% 300%;
+transition: background-position 0.3s ease;
+}
+.neon-value {
+color: var(--neon-green);
+font-weight: 900;
+text-shadow: 0 0 20px rgba(57,255,20,0.3);
 }
 .card {
-background: #1e293b;
-border: 1px solid #334155;
-border-radius: 12px;
-padding: 16px;
+background: var(--bg-card);
+border: 1px solid var(--border);
+border-radius: 14px;
+padding: 14px;
+box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.card-gold {
+border-color: rgba(212,160,23,0.4);
+box-shadow: 0 4px 20px rgba(212,160,23,0.08);
 }
 input, select {
-background: #0f172a;
-border: 1px solid #334155;
-color: white;
+background: #1a1410;
+border: 1px solid var(--border);
+color: var(--text-primary);
 padding: 10px;
 border-radius: 8px;
 width: 100%;
-margin-bottom: 10px;
-box-sizing: border-box;
-font-size: 16px;
+margin-bottom: 8px;
+font-size: 15px;
+font-family: inherit;
 }
-input:focus, select:focus {
-outline: none;
-border-color: #6366f1;
-box-shadow: 0 0 0 2px rgba(99,102,241,0.3);
-}
+input:focus { outline: none; border-color: var(--gold); }
 button {
 cursor: pointer;
+font-family: inherit;
 transition: all 0.15s;
 }
-button:active {
-transform: scale(0.97);
-}
-.btn-primary {
-background: #4f46e5;
-color: white;
+button:active { transform: scale(0.96); }
+.btn-gold {
+background: linear-gradient(135deg, #b8860b, #d4a017);
+color: #1a1410;
 border: none;
-padding: 10px;
-border-radius: 8px;
+padding: 11px;
+border-radius: 10px;
 font-weight: bold;
 width: 100%;
+font-size: 15px;
 }
-.btn-primary:hover {
-background: #4338ca;
-}
-.btn-danger {
+.btn-outline {
 background: transparent;
-border: 1px solid #ef4444;
-color: #ef4444;
-padding: 6px 12px;
-border-radius: 6px;
-font-size: 12px;
+border: 1px solid var(--gold);
+color: var(--gold);
+padding: 8px 14px;
+border-radius: 8px;
+font-size: 13px;
 }
-.btn-danger:hover {
-background: #ef4444;
-color: white;
-}
-.btn-sm {
-background: #334155;
-border: none;
-color: #94a3b8;
-padding: 4px 10px;
-border-radius: 6px;
-font-size: 11px;
-}
-.btn-sm:hover {
-background: #475569;
-color: white;
-}
-.empty-state {
-text-align: center;
-padding: 40px 20px;
-color: #64748b;
-}
-.empty-state-icon {
-font-size: 48px;
-margin-bottom: 12px;
-}
-.nav-btn {
+.nav-item {
 background: none;
 border: none;
-color: #94a3b8;
-font-size: 14px;
-font-weight: 600;
-padding: 8px 16px;
+color: var(--text-secondary);
+font-size: 13px;
+padding: 8px 12px;
 border-radius: 8px;
-transition: all 0.15s;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 3px;
+transition: all 0.2s;
 }
-.nav-btn.active {
-color: #a5b4fc;
-background: rgba(99,102,241,0.15);
+.nav-item.active { color: var(--gold); background: rgba(212,160,23,0.1); }
+.nav-icon { font-size: 20px; }
+.ticker-up { color: var(--neon-green); }
+.ticker-down { color: var(--red-down); }
+.badge {
+display: inline-block;
+padding: 3px 8px;
+border-radius: 6px;
+font-size: 10px;
+font-weight: bold;
+text-transform: uppercase;
 }
-.edit-input {
-background: #0f172a !important;
-border: 1px solid #6366f1 !important;
-padding: 6px 8px !important;
-margin-bottom: 0 !important;
-font-size: 14px !important;
+.badge-buy { background: rgba(57,255,20,0.15); color: var(--neon-green); border: 1px solid rgba(57,255,20,0.3); }
+.badge-sell { background: rgba(255,68,68,0.15); color: var(--red-down); border: 1px solid rgba(255,68,68,0.3); }
+.badge-hold { background: rgba(212,160,23,0.15); color: var(--gold); border: 1px solid rgba(212,160,23,0.3); }
+.badge-submit { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+.tier-lock {
+opacity: 0.4;
+pointer-events: none;
+position: relative;
+}
+.tier-lock::after {
+content: '🔒';
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+font-size: 24px;
 }
 .toast {
 position: fixed;
-bottom: 20px;
+bottom: 90px;
 left: 50%;
 transform: translateX(-50%);
-background: #1e293b;
-border: 1px solid #334155;
-padding: 12px 20px;
-border-radius: 10px;
+background: var(--bg-card);
+border: 1px solid var(--gold);
+padding: 12px 22px;
+border-radius: 12px;
+z-index: 200;
 font-size: 14px;
-z-index: 100;
-animation: slideUp 0.3s ease;
+animation: fadeInUp 0.3s ease;
 }
-@keyframes slideUp {
-from { bottom: 0; opacity: 0; }
-to { bottom: 20px; opacity: 1; }
+@keyframes fadeInUp {
+from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.watermark {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%) rotate(-25deg);
+font-size: 60px;
+opacity: 0.06;
+pointer-events: none;
+white-space: nowrap;
+z-index: 0;
 }
 </style>
-
 </head>
 <body>
 <div id="root"></div>
-
-
 <script type="text/babel">
-const { useState, useEffect, useCallback } = React;
+const { useState, useEffect, useRef, useCallback } = React;
 
-function CoinverseApp() {
-const [view, setView] = useState('dashboard');
+
+// ─── TIER CONFIG ────────────────────────────
+const TIERS = {
+1: { name: 'Seeker', price: '$19.99/wk', coinLimit: 50, photosPerSide: 1, watermark: true },
+2: { name: 'Collector', price: '$39.99/mo', coinLimit: 200, photosPerSide: 2, watermark: true },
+3: { name: 'Echelon', price: '$59.99/mo', coinLimit: 500, photosPerSide: 3, watermark: true },
+4: { name: 'Curator', price: '$99.99/mo', coinLimit: Infinity, photosPerSide: 3, watermark: false }
+};
+
+// ─── SPOT PRICE SIMULATION ──────────────────
+const BASE_SPOTS = { gold: 4547.30, silver: 75.82, platinum: 1124.50, palladium: 1089.00 };
+
+function getSpotPrices() {
+const stored = localStorage.getItem('cv_spots');
+if (stored) {
+const data = JSON.parse(stored);
+const age = Date.now() - data.timestamp;
+if (age < 3600000) return data.prices; // 1 hour
+}
+const prices = {};
+for (const [k, v] of Object.entries(BASE_SPOTS)) {
+const change = (Math.random() - 0.48) * v * 0.01;
+prices[k] = { price: +(v + change).toFixed(2), change: +((change / v) * 100).toFixed(2) };
+}
+localStorage.setItem('cv_spots', JSON.stringify({ prices, timestamp: Date.now() }));
+return prices;
+}
+
+// ─── IDB FOR PHOTOS ─────────────────────────
+function openDB() {
+return new Promise((res, rej) => {
+const req = indexedDB.open('CoinversePhotos', 1);
+req.onupgradeneeded = (e) => { e.target.result.createObjectStore('photos', { keyPath: 'id' }); };
+req.onsuccess = (e) => res(e.target.result);
+req.onerror = () => rej(req.error);
+});
+}
+async function savePhoto(id, dataUrl) {
+const db = await openDB();
+return new Promise((res, rej) => {
+const tx = db.transaction('photos', 'readwrite');
+tx.objectStore('photos').put({ id, dataUrl, timestamp: Date.now() });
+tx.oncomplete = () => res();
+tx.onerror = () => rej(tx.error);
+});
+}
+async function getPhoto(id) {
+const db = await openDB();
+return new Promise((res, rej) => {
+const tx = db.transaction('photos', 'readonly');
+const req = tx.objectStore('photos').get(id);
+req.onsuccess = () => res(req.result?.dataUrl || null);
+req.onerror = () => rej(req.error);
+});
+}
+async function deletePhoto(id) {
+const db = await openDB();
+return new Promise((res, rej) => {
+const tx = db.transaction('photos', 'readwrite');
+tx.objectStore('photos').delete(id);
+tx.oncomplete = () => res();
+tx.onerror = () => rej(tx.error);
+});
+}
+async function getAllPhotos() {
+const db = await openDB();
+return new Promise((res, rej) => {
+const tx = db.transaction('photos', 'readonly');
+const req = tx.objectStore('photos').getAll();
+req.onsuccess = () => {
+const map = {};
+req.result.forEach(r => { map[r.id] = r.dataUrl; });
+res(map);
+};
+req.onerror = () => rej(req.error);
+});
+}
+
+// ─── IMAGE COMPRESSION ──────────────────────
+function compressImage(dataUrl, maxW = 800) {
+return new Promise((res) => {
+const img = new Image();
+img.onload = () => {
+const canvas = document.createElement('canvas');
+const ratio = Math.min(maxW / img.width, 1);
+canvas.width = img.width * ratio;
+canvas.height = img.height * ratio;
+const ctx = canvas.getContext('2d');
+ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+res(canvas.toDataURL('image/jpeg', 0.7));
+};
+img.src = dataUrl;
+});
+}
+
+// ─── ANN GRADING ENGINE ─────────────────────
+function analyzeImage(dataUrl) {
+return new Promise((res) => {
+const img = new Image();
+img.onload = () => {
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = img.width;
+canvas.height = img.height;
+ctx.drawImage(img, 0, 0);
+const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+const data = imageData.data;
+
+// Brightness (luster proxy)
+let totalBright = 0;
+for (let i = 0; i < data.length; i += 4) {
+totalBright += (data[i] + data[i+1] + data[i+2]) / 3;
+}
+const avgBright = totalBright / (data.length / 4);
+
+// Contrast (strike/detail proxy)
+let variance = 0;
+for (let i = 0; i < data.length; i += 4) {
+const v = (data[i] + data[i+1] + data[i+2]) / 3;
+variance += Math.pow(v - avgBright, 2);
+}
+const stdDev = Math.sqrt(variance / (data.length / 4));
+
+// Edge detection (wear proxy)
+let edgeScore = 0;
+for (let y = 1; y < canvas.height - 1; y += 4) {
+for (let x = 1; x < canvas.width - 1; x += 4) {
+const idx = (y * canvas.width + x) * 4;
+const idxR = (y * canvas.width + x + 1) * 4;
+const idxD = ((y + 1) * canvas.width + x) * 4;
+const gx = Math.abs((data[idx] + data[idx+1] + data[idx+2]) / 3 - (data[idxR] + data[idxR+1] + data[idxR+2]) / 3);
+const gy = Math.abs((data[idx] + data[idx+1] + data[idx+2]) / 3 - (data[idxD] + data[idxD+1] + data[idxD+2]) / 3);
+edgeScore += Math.sqrt(gx * gx + gy * gy);
+}
+}
+const totalPixels = (canvas.width / 4) * (canvas.height / 4);
+const avgEdge = edgeScore / totalPixels;
+
+// Grade prediction heuristics
+const brightnessNorm = Math.min(avgBright / 200, 1);
+const contrastNorm = Math.min(stdDev / 80, 1);
+const edgeNorm = Math.min(avgEdge / 15, 1);
+
+const gradeScore = (brightnessNorm * 0.35 + contrastNorm * 0.35 + edgeNorm * 0.30) * 70;
+const predictedGrade = Math.round(Math.min(70, Math.max(4, gradeScore)));
+
+let gradeLabel;
+if (predictedGrade >= 60) gradeLabel = `MS-${predictedGrade - 60}`;
+else if (predictedGrade >= 50) gradeLabel = `AU-${predictedGrade - 50}`;
+else if (predictedGrade >= 40) gradeLabel = `XF-${predictedGrade - 40}`;
+else if (predictedGrade >= 20) gradeLabel = `VF-${predictedGrade - 20}`;
+else if (predictedGrade >= 12) gradeLabel = `F-${predictedGrade - 12}`;
+else gradeLabel = `G-${Math.max(4, predictedGrade)}`;
+
+const confidence = Math.round((contrastNorm * 0.5 + edgeNorm * 0.5) * 85 + 10);
+
+// Problem detection
+const problems = [];
+if (avgBright > 220) problems.push('Possible cleaning (high reflectivity)');
+if (stdDev < 10) problems.push('Weak strike or excessive wear');
+if (avgEdge < 5) problems.push('Significant wear detected');
+
+res({
+predictedGrade,
+gradeLabel,
+confidence: Math.min(98, confidence),
+brightness: +avgBright.toFixed(1),
+contrast: +stdDev.toFixed(1),
+edgeDetail: +avgEdge.toFixed(2),
+problems,
+timestamp: Date.now()
+});
+};
+img.src = dataUrl;
+});
+}
+
+// ─── APP ────────────────────────────────────
+function App() {
+const [view, setView] = useState('home');
+const [userTier, setUserTier] = useState(() => parseInt(localStorage.getItem('cv_tier')) || 1);
 const [coins, setCoins] = useState(() => JSON.parse(localStorage.getItem('cv_coins')) || []);
 const [listings, setListings] = useState(() => JSON.parse(localStorage.getItem('cv_listings')) || []);
+const [photoCache, setPhotoCache] = useState({});
+const [spots, setSpots] = useState(getSpotPrices());
+const [toast, setToast] = useState(null);
+const [scanStep, setScanStep] = useState(null); // { side: 'obv'|'rev', angle: 0-2, photos: [] }
+const [scanResults, setScanResults] = useState(null);
+const [tilt, setTilt] = useState({ x: 50, y: 50 });
 const [search, setSearch] = useState('');
 const [editingCoin, setEditingCoin] = useState(null);
 const [editingListing, setEditingListing] = useState(null);
-const [toast, setToast] = useState(null);
+const [newCoinForm, setNewCoinForm] = useState({ name: '', year: '', grade: '', value: '', notes: '' });
+const [showTierModal, setShowTierModal] = useState(false);
+const [annChat, setAnnChat] = useState([]);
+const [annInput, setAnnInput] = useState('');
+const fileInputRef = useRef(null);
+const [pendingPhotoSlot, setPendingPhotoSlot] = useState(null);
+
+const tier = TIERS[userTier];
+const coinCount = coins.length;
+const atLimit = coinCount >= tier.coinLimit;
+
+// Gyroscope tilt for metallic text
+useEffect(() => {
+const handler = (e) => {
+const x = Math.max(0, Math.min(100, 50 + (e.gamma || 0) * 0.5));
+const y = Math.max(0, Math.min(100, 50 + (e.beta || 0) * 0.5));
+setTilt({ x, y });
+};
+window.addEventListener('deviceorientation', handler);
+return () => window.removeEventListener('deviceorientation', handler);
+}, []);
 
 // Persist
-useEffect(() => {
-localStorage.setItem('cv_coins', JSON.stringify(coins));
-}, [coins]);
-useEffect(() => {
-localStorage.setItem('cv_listings', JSON.stringify(listings));
-}, [listings]);
+useEffect(() => { localStorage.setItem('cv_coins', JSON.stringify(coins)); }, [coins]);
+useEffect(() => { localStorage.setItem('cv_listings', JSON.stringify(listings)); }, [listings]);
+useEffect(() => { localStorage.setItem('cv_tier', userTier); }, [userTier]);
 
-// Toast helper
-const showToast = (msg) => {
-setToast(msg);
-setTimeout(() => setToast(null), 2000);
-};
+// Load photos on mount
+useEffect(() => { getAllPhotos().then(setPhotoCache); }, []);
+
+// Refresh spots periodically
+useEffect(() => {
+const interval = setInterval(() => setSpots(getSpotPrices()), 60000);
+return () => clearInterval(interval);
+}, []);
+
+const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2500); };
 
 const totalValue = coins.reduce((acc, c) => acc + Number(c.value || 0), 0);
+const prevValue = coins.reduce((acc, c) => acc + Number(c.prevValue || c.value || 0), 0);
+const valueChange = totalValue - prevValue;
+const valueChangePct = prevValue ? ((valueChange / prevValue) * 100).toFixed(2) : 0;
 
-// Intel: based on price percentiles among listings
-const getIntel = (price) => {
-const allPrices = listings.map(l => Number(l.price)).filter(p => p > 0);
-if (allPrices.length < 3) return { score: 'N/A', action: 'HOLD', color: 'text-yellow-400' };
-const avg = allPrices.reduce((a,b) => a+b,0) / allPrices.length;
-const ratio = price / avg;
-if (ratio < 0.7) return { score: '9/10', action: 'BUY', color: 'text-emerald-400' };
-if (ratio < 0.9) return { score: '7/10', action: 'BUY', color: 'text-emerald-400' };
-if (ratio < 1.1) return { score: '5/10', action: 'HOLD', color: 'text-yellow-400' };
-if (ratio < 1.4) return { score: '3/10', action: 'PASS', color: 'text-red-400' };
-return { score: '1/10', action: 'PASS', color: 'text-red-400' };
+// Nightly revaluation simulation
+const revaluePortfolio = () => {
+const updated = coins.map(c => {
+const fluctuation = 1 + (Math.random() - 0.48) * 0.04;
+return { ...c, prevValue: c.value, value: Math.round(Number(c.value) * fluctuation) };
+});
+setCoins(updated);
+showToast('🌙 Portfolio revalued for today');
 };
 
-const addCoin = (e) => {
-e.preventDefault();
-const fd = new FormData(e.target);
-setCoins([...coins, {
+const addCoin = () => {
+if (atLimit) { showToast(`🔒 ${tier.name} tier limited to ${tier.coinLimit} coins`); return; }
+if (!newCoinForm.name || !newCoinForm.value) { showToast('Name and value required'); return; }
+const coin = {
 id: Date.now(),
-name: fd.get('name'),
-year: fd.get('year'),
-grade: fd.get('grade'),
-value: Number(fd.get('value'))
-}]);
-e.target.reset();
-showToast('✅ Coin added!');
+...newCoinForm,
+value: Number(newCoinForm.value),
+obvPhotos: [],
+revPhotos: [],
+createdAt: Date.now(),
+lastAnalysis: null
 };
-
-const updateCoin = (id, field, value) => {
-setCoins(coins.map(c => c.id === id ? { ...c, [field]: field === 'value' ? Number(value) : value } : c));
+setCoins([...coins, coin]);
+setNewCoinForm({ name: '', year: '', grade: '', value: '', notes: '' });
+showToast('✅ Coin added to vault');
 };
 
 const deleteCoin = (id) => {
+const coin = coins.find(c => c.id === id);
+if (coin) {
+[...coin.obvPhotos, ...coin.revPhotos].forEach(pid => deletePhoto(pid));
+}
 setCoins(coins.filter(c => c.id !== id));
 setEditingCoin(null);
 showToast('🗑️ Coin removed');
 };
 
-const addListing = (e) => {
-e.preventDefault();
-const fd = new FormData(e.target);
-setListings([...listings, {
-id: Date.now(),
-name: fd.get('name'),
-price: Number(fd.get('price'))
-}]);
-e.target.reset();
-showToast('📢 Listing posted!');
+const updateCoin = (id, field, val) => {
+setCoins(coins.map(c => c.id === id ? { ...c, [field]: field === 'value' ? Number(val) : val } : c));
 };
 
-const updateListing = (id, field, value) => {
-setListings(listings.map(l => l.id === id ? { ...l, [field]: field === 'price' ? Number(value) : value } : l));
+const addListing = () => {
+const name = document.getElementById('list-name')?.value;
+const price = document.getElementById('list-price')?.value;
+if (!name || !price) return;
+setListings([...listings, { id: Date.now(), name, price: Number(price) }]);
+document.getElementById('list-name').value = '';
+document.getElementById('list-price').value = '';
+showToast('📢 Listing posted');
 };
 
 const deleteListing = (id) => {
 setListings(listings.filter(l => l.id !== id));
-setEditingListing(null);
 showToast('🗑️ Listing removed');
 };
 
-const filteredCoins = coins.filter(c =>
-c.name.toLowerCase().includes(search.toLowerCase()) ||
-(c.year || '').includes(search) ||
-(c.grade || '').toLowerCase().includes(search.toLowerCase())
-);
+// Photo capture
+const capturePhoto = (side) => {
+const maxPhotos = tier.photosPerSide;
+const input = document.createElement('input');
+input.type = 'file';
+input.accept = 'image/*';
+input.capture = 'environment';
+input.onchange = async (e) => {
+const file = e.target.files[0];
+if (!file) return;
+const reader = new FileReader();
+reader.onload = async (ev) => {
+const compressed = await compressImage(ev.target.result, 800);
+const photoId = `photo_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+await savePhoto(photoId, compressed);
+setPhotoCache(prev => ({ ...prev, [photoId]: compressed }));
+if (side === 'obv') {
+setScanStep(prev => prev ? { ...prev, obvPhotos: [...(prev.obvPhotos || []), photoId] } : prev);
+} else {
+setScanStep(prev => prev ? { ...prev, revPhotos: [...(prev.revPhotos || []), photoId] } : prev);
+}
+showToast(`📸 ${side === 'obv' ? 'Obverse' : 'Reverse'} photo captured`);
+};
+reader.readAsDataURL(file);
+};
+input.click();
+};
 
+// Full scan flow
+const startScan = () => {
+setScanStep({ side: 'obv', angle: 0, obvPhotos: [], revPhotos: [] });
+setScanResults(null);
+};
+
+const advanceScan = async () => {
+if (!scanStep) return;
+const { side, angle, obvPhotos, revPhotos } = scanStep;
+if (side === 'obv' && angle < 2) {
+setScanStep({ side: 'obv', angle: angle + 1, obvPhotos, revPhotos });
+} else if (side === 'obv') {
+setScanStep({ side: 'rev', angle: 0, obvPhotos, revPhotos });
+} else if (side === 'rev' && angle < 2) {
+setScanStep({ side: 'rev', angle: angle + 1, obvPhotos, revPhotos });
+} else {
+// All photos captured — run ANN analysis
+const allPhotos = [...obvPhotos, ...revPhotos];
+const analyses = [];
+for (const pid of allPhotos) {
+const dataUrl = photoCache[pid] || await getPhoto(pid);
+if (dataUrl) analyses.push(await analyzeImage(dataUrl));
+}
+const avgGrade = Math.round(analyses.reduce((a, b) => a + b.predictedGrade, 0) / analyses.length);
+const avgConf = Math.round(analyses.reduce((a, b) => a + b.confidence, 0) / analyses.length);
+const allProblems = [...new Set(analyses.flatMap(a => a.problems))];
+const result = {
+predictedGrade: avgGrade,
+gradeLabel: (() => {
+if (avgGrade >= 60) return `MS-${avgGrade - 60}`;
+if (avgGrade >= 50) return `AU-${avgGrade - 50}`;
+if (avgGrade >= 40) return `XF-${avgGrade - 40}`;
+if (avgGrade >= 20) return `VF-${avgGrade - 20}`;
+return `F-${Math.max(4, avgGrade - 12)}`;
+})(),
+confidence: avgConf,
+problems: allProblems,
+analyses,
+obvPhotos,
+revPhotos,
+timestamp: Date.now()
+};
+setScanResults(result);
+setScanStep(null);
+showToast('🔬 ANN analysis complete');
+}
+};
+
+const saveScanToVault = () => {
+if (!scanResults || atLimit) return;
+const coin = {
+id: Date.now(),
+name: 'New Scan',
+year: '',
+grade: scanResults.gradeLabel,
+value: 0,
+notes: `ANN Confidence: ${scanResults.confidence}%`,
+obvPhotos: scanResults.obvPhotos,
+revPhotos: scanResults.revPhotos,
+lastAnalysis: scanResults,
+createdAt: Date.now()
+};
+setCoins([...coins, coin]);
+setScanResults(null);
+showToast('✅ Coin saved to vault');
+};
+
+// ANN Chat
+const sendAnnMessage = () => {
+if (!annInput.trim()) return;
+const userMsg = { role: 'user', text: annInput };
+let reply = '';
+const q = annInput.toLowerCase();
+if (q.includes('grade') || q.includes('worth')) {
+reply = `Based on my analysis, your coins show an average grade distribution across ${coins.length} holdings. For precise grading, please use the Scan tab to capture obverse and reverse photos. I'll analyze strike, luster, contact marks, and surface preservation.`;
+} else if (q.includes('portfolio') || q.includes('value')) {
+reply = `Your current portfolio value is $${totalValue.toLocaleString()} across ${coins.length} coins. ${valueChange >= 0 ? '▲' : '▼'} $${Math.abs(valueChange).toLocaleString()} today. Spot gold: $${spots.gold.price}, silver: $${spots.silver.price}.`;
+} else if (q.includes('sell') || q.includes('buy') || q.includes('signal')) {
+reply = `Based on current market data, I'm tracking ${listings.length} active listings. For specific Buy/Sell/Hold signals, navigate to the Home tab. I recommend holding key date coins and watching DMPL Morgans closely.`;
+} else {
+reply = `I'm ANN, your numismatic AI assistant. I can help with grading analysis, portfolio valuation, market signals, and coin identification. Try asking about your portfolio value or scan a coin for grading.`;
+}
+setAnnChat([...annChat, userMsg, { role: 'ann', text: reply }]);
+setAnnInput('');
+};
+
+const tierMetaStyle = {
+backgroundPosition: `${tilt.x}% ${tilt.y}%`,
+backgroundSize: '300% 300%'
+};
+
+// ─── RENDER ──────────────────────────────
 return (
-<div className="min-h-screen pb-20">
-{/* Navigation */}
-<nav className="p-4 border-b border-slate-800 flex justify-between items-center sticky top-0 bg-slate-900/90 backdrop-blur z-50">
-<h1 className="text-xl font-bold text-indigo-400">🪙 Coinverse</h1>
-<div className="flex gap-1">
-<button className={`nav-btn ${view === 'dashboard' ? 'active' : ''}`} onClick={() => setView('dashboard')}>Dash</button>
-<button className={`nav-btn ${view === 'portfolio' ? 'active' : ''}`} onClick={() => setView('portfolio')}>Portfolio</button>
-<button className={`nav-btn ${view === 'market' ? 'active' : ''}`} onClick={() => setView('market')}>Market</button>
+<div className="min-h-screen pb-16" style={{ background: 'var(--bg-deep)' }}>
+{/* Header */}
+<header className="sticky top-0 z-50 px-4 py-3 border-b flex justify-between items-center" style={{ background: 'rgba(26,20,16,0.95)', borderColor: 'var(--border)', backdropFilter: 'blur(10px)' }}>
+<div>
+<h1 className="text-lg font-bold metallic-text" style={tierMetaStyle}>Coinverse</h1>
+<span className="text-xs" style={{ color: 'var(--gold)' }}>Oracle Edition</span>
 </div>
-</nav>
-
-<div className="p-4 max-w-md mx-auto">
-{/* Dashboard */}
-{view === 'dashboard' && (
-<div className="space-y-6">
-<div className="grid grid-cols-2 gap-3">
-<div className="card text-center">
-<p className="text-slate-400 text-xs uppercase tracking-wide">Total Coins</p>
-<p className="text-3xl font-bold">{coins.length}</p>
-</div>
-<div className="card text-center border-indigo-500/40">
-<p className="text-slate-400 text-xs uppercase tracking-wide">Portfolio Value</p>
-<p className="text-3xl font-bold text-emerald-400">${totalValue.toLocaleString()}</p>
-</div>
-</div>
-
-{listings.length > 0 && (
-<div className="card">
-<h3 className="font-bold mb-3">📊 Market Intel</h3>
-<p className="text-slate-400 text-sm mb-2">Based on {listings.length} active listing{listings.length > 1 ? 's' : ''}</p>
-<div className="text-sm space-y-1">
-<p>Avg listing price: <span className="text-emerald-400 font-mono">
-${(listings.reduce((a,l) => a + Number(l.price), 0) / listings.length).toFixed(0)}
-</span></p>
-<p>Most recent: <span className="text-indigo-300">{listings[listings.length-1]?.name || '—'}</span></p>
-</div>
-</div>
-)}
-
-<div className="card">
-<h3 className="font-bold mb-3">🕐 Recent Coins</h3>
-{coins.length === 0 ? (
-<div className="empty-state">
-<div className="empty-state-icon">🪙</div>
-<p>No coins yet</p>
-<p className="text-xs">Head to Portfolio to start your collection</p>
-</div>
-) : (
-coins.slice(-3).reverse().map(c => (
-<div key={c.id} className="flex justify-between border-b border-slate-700 py-3 last:border-0">
-<span>{c.name} <span className="text-slate-500 text-xs">({c.year})</span></span>
-<span className="font-mono text-emerald-400 font-semibold">${Number(c.value).toLocaleString()}</span>
-</div>
-))
-)}
-</div>
-</div>
-)}
-
-{/* Portfolio */}
-{view === 'portfolio' && (
-<div className="space-y-6">
-<form onSubmit={addCoin} className="card">
-<h3 className="font-bold mb-3">➕ Add Coin</h3>
-<input name="name" placeholder="Coin Name *" required />
-<div className="flex gap-2">
-<input name="year" placeholder="Year (e.g. 1881)" />
-<input name="grade" placeholder="Grade (e.g. MS65)" />
-</div>
-<input name="value" type="number" placeholder="Value ($) *" required />
-<button type="submit" className="btn-primary">Add to Collection</button>
-</form>
-
 <div className="flex items-center gap-2">
-<h3 className="font-bold flex-1">💼 Your Assets ({coins.length})</h3>
-{coins.length > 0 && (
-<input
-placeholder="🔍 Search..."
-value={search}
-onChange={(e) => setSearch(e.target.value)}
-style={{ width: '140px', marginBottom: 0, padding: '8px 10px', fontSize: '13px' }}
-/>
-)}
+<span className="text-xs px-2 py-1 rounded" style={{ background: 'rgba(212,160,23,0.15)', color: 'var(--gold)' }}>
+{tier.name}
+</span>
+<button className="btn-outline text-xs" onClick={() => setShowTierModal(true)}>Upgrade</button>
+</div>
+</header>
+
+{/* Main Content */}
+<div className="px-3 pt-3 max-w-lg mx-auto">
+{/* HOME */}
+{view === 'home' && (
+<div className="space-y-4">
+{/* Portfolio Value */}
+<div className="card card-gold text-center relative" style={{ overflow: 'hidden' }}>
+<div className="watermark">{tier.watermark ? 'COINVERSE ' + tier.name.toUpperCase() : ''}</div>
+<p style={{ color: 'var(--text-secondary)', fontSize: 12, textTransform: 'uppercase', letterSpacing: 2 }}>Portfolio Value</p>
+<p className="neon-value" style={{ fontSize: 36, letterSpacing: -1 }}>${totalValue.toLocaleString()}</p>
+<p style={{ fontSize: 14, color: valueChange >= 0 ? 'var(--neon-green)' : 'var(--red-down)' }}>
+{valueChange >= 0 ? '▲' : '▼'} ${Math.abs(valueChange).toLocaleString()} ({valueChangePct}%) Today
+</p>
+<button className="btn-outline mt-2 text-xs" onClick={revaluePortfolio}>🔄 Refresh Valuation</button>
 </div>
 
-{filteredCoins.length === 0 ? (
-<div className="empty-state">
-<div className="empty-state-icon">{search ? '🔍' : '📭'}</div>
-<p>{search ? 'No coins match your search' : 'Your collection is empty'}</p>
-<p className="text-xs">{search ? 'Try a different term' : 'Use the form above to add your first coin'}</p>
+{/* Spot Prices */}
+<div className="grid grid-cols-4 gap-2">
+{Object.entries(spots).map(([k, v]) => (
+<div key={k} className="card text-center" style={{ padding: 10 }}>
+<p style={{ fontSize: 10, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>{k}</p>
+<p style={{ fontSize: 14, fontWeight: 'bold', color: 'var(--gold-light)' }}>${v.price.toLocaleString()}</p>
+<p style={{ fontSize: 11, color: v.change >= 0 ? 'var(--neon-green)' : 'var(--red-down)' }}>
+{v.change >= 0 ? '▲' : '▼'} {Math.abs(v.change).toFixed(2)}%
+</p>
+</div>
+))}
+</div>
+
+{/* Market Pulse */}
+<div className="card card-gold">
+<h3 style={{ fontWeight: 'bold', marginBottom: 8, color: 'var(--gold)' }}>📊 2026 Market Pulse</h3>
+<div className="space-y-2 text-sm">
+<div className="flex justify-between"><span>Morgan Dollars</span><span className="ticker-up">▲ +11.2% YTD</span></div>
+<div className="flex justify-between"><span>Peace Dollars</span><span className="ticker-up">▲ +8.7% YTD</span></div>
+<div className="flex justify-between"><span>Key Dates</span><span className="ticker-up">▲ +19.4% YTD</span></div>
+</div>
+<p style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 8 }}>
+Institutional numismatic demand surging. DMPL Morgans and key date 20th-century coins leading. Certified coins decoupling from bullion.
+</p>
+</div>
+
+{/* Buy/Sell/Hold Signals */}
+<div className="card card-gold">
+<h3 style={{ fontWeight: 'bold', marginBottom: 8, color: 'var(--gold)' }}>🎯 Buy / Sell / Hold Signals</h3>
+{[
+{ coin: '1884-S Morgan MS-65 DMPL', last: 185000, pop: 3, change: 18.4, signal: 'BUY', note: 'Pop 3. Heritage Jan 2026: $178K. DMPL premium expanding.' },
+{ coin: '1932-S Washington MS-65', last: 52000, pop: 18, change: 12.1, signal: 'HOLD', note: 'Key date. Demand outpacing supply.' },
+{ coin: '1934-S Peace MS-64', last: 89000, pop: 22, change: 14.8, signal: 'HOLD', note: 'Major auction Q3 2026. Hold for exposure.' },
+].map((s, i) => (
+<div key={i} className="flex justify-between items-start py-2" style={{ borderBottom: i < 2 ? '1px solid var(--border)' : 'none' }}>
+<div>
+<p style={{ fontWeight: 'bold', fontSize: 13 }}>{s.coin}</p>
+<p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{s.note}</p>
+</div>
+<div className="text-right">
+<span className={`badge badge-${s.signal.toLowerCase()}`}>{s.signal}</span>
+<p className="neon-value" style={{ fontSize: 14 }}>${s.last.toLocaleString()}</p>
+<p style={{ fontSize: 10, color: 'var(--text-secondary)' }}>Pop: {s.pop} <span className="ticker-up">▲ {s.change}%</span></p>
+</div>
+</div>
+))}
+</div>
+
+{/* Upcoming Auctions */}
+<div className="card">
+<h3 style={{ fontWeight: 'bold', marginBottom: 8, color: 'var(--gold)' }}>📅 Upcoming Auctions</h3>
+{[
+{ house: 'Heritage Auctions', event: 'US Coins Signature Sale', date: 'June 14, 2026', note: '400+ lots, major DMPL Morgan collection' },
+{ house: "Stack's Bowers", event: 'Official ANA Auction', date: 'Aug 6-10, 2026', note: 'World record Morgan Dollar collection' },
+].map((a, i) => (
+<div key={i} className="py-2" style={{ borderBottom: i === 0 ? '1px solid var(--border)' : 'none' }}>
+<p style={{ fontWeight: 'bold', fontSize: 13, color: 'var(--gold-light)' }}>{a.house}</p>
+<p style={{ fontSize: 12 }}>{a.event} — {a.date}</p>
+<p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{a.note}</p>
+</div>
+))}
+</div>
+</div>
+)}
+
+{/* SCAN */}
+{view === 'scan' && (
+<div className="space-y-4">
+<div className="card card-gold text-center">
+<h3 style={{ fontWeight: 'bold', color: 'var(--gold)', marginBottom: 8 }}>🔬 Coin Scanner</h3>
+<p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>3 obverse + 3 reverse angles for full ANN analysis</p>
+</div>
+
+{!scanStep && !scanResults && (
+<div className="card text-center space-y-3">
+<p style={{ fontSize: 40 }}>📷</p>
+<p style={{ fontWeight: 'bold' }}>Ready to scan</p>
+<p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>You'll capture 6 photos total — 3 obverse, 3 reverse</p>
+<button className="btn-gold" onClick={startScan}>Start Scan</button>
+</div>
+)}
+
+{scanStep && (
+<div className="card card-gold text-center space-y-3">
+<p style={{ fontWeight: 'bold', color: 'var(--gold)' }}>
+{scanStep.side === 'obv' ? '🪙 Obverse' : '🔄 Reverse'} — Shot {scanStep.angle + 1} of 3
+</p>
+<p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+{scanStep.angle === 0 ? 'Straight down' : scanStep.angle === 1 ? 'Tilt phone slightly left' : 'Tilt phone slightly right'}
+</p>
+<div className="flex gap-2 justify-center">
+{[0, 1, 2].map(i => (
+<div key={i} style={{ width: 12, height: 12, borderRadius: '50%', background: i <= scanStep.angle ? 'var(--gold)' : 'var(--border)' }} />
+))}
+</div>
+<button className="btn-gold" onClick={() => capturePhoto(scanStep.side)}>
+📸 Capture {scanStep.side === 'obv' ? 'Obverse' : 'Reverse'}
+</button>
+<button className="btn-outline" onClick={advanceScan}>
+{scanStep.side === 'rev' && scanStep.angle === 2 ? '✅ Complete & Analyze' : 'Next →'}
+</button>
+<button className="btn-outline" style={{ borderColor: 'var(--red-down)', color: 'var(--red-down)' }} onClick={() => { setScanStep(null); setScanResults(null); }}>
+Cancel
+</button>
+</div>
+)}
+
+{scanResults && (
+<div className="space-y-3">
+<div className="card card-gold text-center">
+<h3 style={{ fontWeight: 'bold', color: 'var(--gold)' }}>🔬 ANN Analysis Results</h3>
+<p className="neon-value" style={{ fontSize: 40 }}>{scanResults.gradeLabel}</p>
+<p style={{ fontSize: 13 }}>Confidence: {scanResults.confidence}%</p>
+{scanResults.problems.length > 0 && (
+<div style={{ marginTop: 8, textAlign: 'left' }}>
+<p style={{ fontSize: 11, color: 'var(--red-down)', fontWeight: 'bold' }}>⚠️ Flags:</p>
+{scanResults.problems.map((p, i) => (
+<p key={i} style={{ fontSize: 11, color: 'var(--red-down)' }}>• {p}</p>
+))}
+</div>
+)}
+</div>
+<button className="btn-gold" onClick={saveScanToVault}>💾 Save to Vault</button>
+<button className="btn-outline" onClick={() => setScanResults(null)}>Discard</button>
+</div>
+)}
+</div>
+)}
+
+{/* VAULT */}
+{view === 'vault' && (
+<div className="space-y-4">
+<div className="card card-gold">
+<h3 style={{ fontWeight: 'bold', color: 'var(--gold)', marginBottom: 8 }}>💼 Vault ({coinCount}/{tier.coinLimit === Infinity ? '∞' : tier.coinLimit})</h3>
+{atLimit && <p style={{ fontSize: 11, color: 'var(--red-down)' }}>Limit reached. Upgrade to add more coins.</p>}
+<div className="space-y-2">
+<input placeholder="Coin Name *" value={newCoinForm.name} onChange={e => setNewCoinForm({ ...newCoinForm, name: e.target.value })} />
+<div className="flex gap-2">
+<input placeholder="Year" value={newCoinForm.year} onChange={e => setNewCoinForm({ ...newCoinForm, year: e.target.value })} />
+<input placeholder="Grade" value={newCoinForm.grade} onChange={e => setNewCoinForm({ ...newCoinForm, grade: e.target.value })} />
+</div>
+<input placeholder="Value ($) *" type="number" value={newCoinForm.value} onChange={e => setNewCoinForm({ ...newCoinForm, value: e.target.value })} />
+<button className="btn-gold" onClick={addCoin} disabled={atLimit}>Add to Vault</button>
+</div>
+</div>
+<input placeholder="🔍 Search vault..." value={search} onChange={e => setSearch(e.target.value)} style={{ marginBottom: 0 }} />
+{coins.filter(c => c.name.toLowerCase().includes(search.toLowerCase())).length === 0 ? (
+<div className="card text-center" style={{ padding: 40 }}>
+<p style={{ fontSize: 40 }}>🪙</p>
+<p style={{ color: 'var(--text-secondary)' }}>{search ? 'No matches' : 'Vault empty — add your first coin'}</p>
 </div>
 ) : (
-<div className="space-y-2">
-{filteredCoins.map(c => (
-<div key={c.id} className="card relative">
+coins.filter(c => c.name.toLowerCase().includes(search.toLowerCase())).map(c => (
+<div key={c.id} className="card" style={{ position: 'relative' }}>
 {editingCoin === c.id ? (
 <div className="space-y-2">
+<input value={c.name} onChange={e => updateCoin(c.id, 'name', e.target.value)} placeholder="Name" />
 <div className="flex gap-2">
-<input className="edit-input" value={c.name} onChange={(e) => updateCoin(c.id, 'name', e.target.value)} placeholder="Name" />
-<input className="edit-input" value={c.year} onChange={(e) => updateCoin(c.id, 'year', e.target.value)} placeholder="Year" />
+<input value={c.year} onChange={e => updateCoin(c.id, 'year', e.target.value)} placeholder="Year" />
+<input value={c.grade} onChange={e => updateCoin(c.id, 'grade', e.target.value)} placeholder="Grade" />
 </div>
+<input type="number" value={c.value} onChange={e => updateCoin(c.id, 'value', e.target.value)} placeholder="Value" />
 <div className="flex gap-2">
-<input className="edit-input" value={c.grade} onChange={(e) => updateCoin(c.id, 'grade', e.target.value)} placeholder="Grade" />
-<input className="edit-input" type="number" value={c.value} onChange={(e) => updateCoin(c.id, 'value', e.target.value)} placeholder="Value" />
+<button className="btn-gold" style={{ fontSize: 12, padding: 6 }} onClick={() => setEditingCoin(null)}>Done</button>
+<button className="btn-outline" style={{ borderColor: 'var(--red-down)', color: 'var(--red-down)', fontSize: 12 }} onClick={() => deleteCoin(c.id)}>Delete</button>
 </div>
-<div className="flex gap-2 mt-1">
-<button className="btn-sm" style={{background:'#4f46e5', color:'white'}} onClick={() => setEditingCoin(null)}>Done</button>
-<button className="btn-danger" onClick={() => deleteCoin(c.id)}>Delete</button>
+<div className="flex gap-2 mt-2">
+<button className="btn-outline text-xs" onClick={() => capturePhoto('obv')}>
+📸 Obv ({(c.obvPhotos || []).length}/{tier.photosPerSide})
+</button>
+<button className="btn-outline text-xs" onClick={() => capturePhoto('rev')}>
+📸 Rev ({(c.revPhotos || []).length}/{tier.photosPerSide})
+</button>
 </div>
 </div>
 ) : (
-<div className="flex justify-between items-center" onClick={() => setEditingCoin(c.id)}>
+<div onClick={() => setEditingCoin(c.id)}>
+<div className="flex justify-between items-start">
 <div>
-<p className="font-bold">{c.name}</p>
-<p className="text-xs text-slate-400">{c.year || '—'} • {c.grade || '—'}</p>
-</div>
-<div className="flex items-center gap-3">
-<p className="text-xl font-bold text-emerald-400">${Number(c.value).toLocaleString()}</p>
-<span className="text-slate-600 text-xs">✎</span>
-</div>
-</div>
+<p style={{ fontWeight: 'bold', fontSize: 15 }}>{c.name}</p>
+<p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{c.year || '—'} • {c.grade || '—'}</p>
+{c.lastAnalysis && (
+<p style={{ fontSize: 10, color: 'var(--gold)' }}>ANN: {c.lastAnalysis.gradeLabel} ({c.lastAnalysis.confidence}%)</p>
 )}
 </div>
+<p className="neon-value" style={{ fontSize: 18 }}>${Number(c.value).toLocaleString()}</p>
+</div>
+{(c.obvPhotos?.length > 0 || c.revPhotos?.length > 0) && (
+<div className="flex gap-1 mt-2">
+{[...(c.obvPhotos || []), ...(c.revPhotos || [])].slice(0, 3).map(pid => (
+photoCache[pid] ? <img key={pid} src={photoCache[pid]} style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover' }} alt="" /> : null
 ))}
 </div>
 )}
 </div>
 )}
-
-{/* Market */}
-{view === 'market' && (
-<div className="space-y-6">
-<form onSubmit={addListing} className="card">
-<h3 className="font-bold mb-3">📢 List a Coin</h3>
-<input name="name" placeholder="Coin Name *" required />
-<input name="price" type="number" placeholder="Price ($) *" required />
-<button type="submit" className="btn-primary" style={{background: '#059669'}}>Post Listing</button>
-</form>
-
-<h3 className="font-bold">📋 Market Feed ({listings.length})</h3>
-
-{listings.length === 0 ? (
-<div className="empty-state">
-<div className="empty-state-icon">🏪</div>
-<p>No listings yet</p>
-<p className="text-xs">Be the first to list a coin for sale</p>
 </div>
-) : (
-<div className="space-y-3">
-{[...listings].reverse().map(l => {
-const intel = getIntel(l.price);
-return (
-<div key={l.id} className="card">
-{editingListing === l.id ? (
-<div className="space-y-2">
-<div className="flex gap-2">
-<input className="edit-input" value={l.name} onChange={(e) => updateListing(l.id, 'name', e.target.value)} placeholder="Name" />
-<input className="edit-input" type="number" value={l.price} onChange={(e) => updateListing(l.id, 'price', e.target.value)} placeholder="Price" />
-</div>
-<div className="flex gap-2 mt-1">
-<button className="btn-sm" style={{background:'#4f46e5', color:'white'}} onClick={() => setEditingListing(null)}>Done</button>
-<button className="btn-danger" onClick={() => deleteListing(l.id)}>Delete</button>
-</div>
-</div>
-) : (
-<div className="flex justify-between items-start" onClick={() => setEditingListing(l.id)}>
-<div>
-<h4 className="font-bold">{l.name}</h4>
-<p className="text-2xl font-black">${Number(l.price).toLocaleString()}</p>
-</div>
-<div className="flex items-center gap-2">
-<div className={`text-[10px] px-2 py-1 rounded border font-bold ${intel.color} bg-slate-800/80 border-slate-600`}>
-{intel.action} {intel.score}
-</div>
-<span className="text-slate-600 text-xs">✎</span>
-</div>
+))
+)}
 </div>
 )}
+
+{/* MARKET */}
+{view === 'market' && (
+<div className="space-y-4">
+<div className="card card-gold">
+<h3 style={{ fontWeight: 'bold', color: 'var(--gold)', marginBottom: 8 }}>📢 Post Listing</h3>
+<input id="list-name" placeholder="Coin Name *" />
+<input id="list-price" type="number" placeholder="Price ($) *" />
+<button className="btn-gold" onClick={addListing}>Post Listing</button>
+</div>
+<h3 style={{ fontWeight: 'bold', color: 'var(--gold)' }}>📋 Market Feed ({listings.length})</h3>
+{listings.length === 0 ? (
+<div className="card text-center" style={{ padding: 30 }}><p style={{ color: 'var(--text-secondary)' }}>No listings yet</p></div>
+) : (
+[...listings].reverse().map(l => {
+const allPrices = listings.map(x => Number(x.price)).filter(p => p > 0);
+const avg = allPrices.length ? allPrices.reduce((a, b) => a + b, 0) / allPrices.length : l.price;
+const ratio = l.price / avg;
+const intel = ratio < 0.7 ? { action: 'BUY', cls: 'badge-buy' } : ratio < 0.9 ? { action: 'BUY', cls: 'badge-buy' } : ratio < 1.1 ? { action: 'HOLD', cls: 'badge-hold' } : ratio < 1.4 ? { action: 'PASS', cls: 'badge-sell' } : { action: 'SELL', cls: 'badge-sell' };
+return (
+<div key={l.id} className="card flex justify-between items-center" onClick={() => setEditingListing(l.id)}>
+<div>
+<p style={{ fontWeight: 'bold' }}>{l.name}</p>
+<p className="neon-value" style={{ fontSize: 20 }}>${Number(l.price).toLocaleString()}</p>
+</div>
+<span className={`badge ${intel.cls}`}>{intel.action}</span>
 </div>
 );
-})}
+})
+)}
 </div>
 )}
+
+{/* ANN CHAT */}
+{view === 'ann' && (
+<div className="space-y-3">
+<div className="card card-gold">
+<h3 style={{ fontWeight: 'bold', color: 'var(--gold)' }}>🤖 ANN — Numismatic AI</h3>
+<p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Ask about grading, portfolio, market signals, or coin identification.</p>
+</div>
+<div className="card space-y-2" style={{ maxHeight: 400, overflowY: 'auto', minHeight: 200 }}>
+{annChat.length === 0 && (
+<p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: 30 }}>
+Ask me anything about your coins...
+</p>
+)}
+{annChat.map((msg, i) => (
+<div key={i} style={{ textAlign: msg.role === 'user' ? 'right' : 'left' }}>
+<span style={{
+display: 'inline-block',
+padding: '8px 12px',
+borderRadius: 10,
+background: msg.role === 'user' ? 'rgba(212,160,23,0.15)' : 'rgba(57,255,20,0.08)',
+fontSize: 13,
+maxWidth: '85%'
+}}>
+{msg.text}
+</span>
+</div>
+))}
+</div>
+<div className="flex gap-2">
+<input value={annInput} onChange={e => setAnnInput(e.target.value)} placeholder="Ask ANN..." style={{ marginBottom: 0, flex: 1 }}
+onKeyDown={e => e.key === 'Enter' && sendAnnMessage()} />
+<button className="btn-gold" style={{ width: 'auto', padding: '10px 16px' }} onClick={sendAnnMessage}>Send</button>
+</div>
 </div>
 )}
 </div>
 
-{/* Toast notification */}
+{/* Bottom Nav */}
+<nav className="fixed bottom-0 left-0 right-0 z-50 px-2 py-2 flex justify-around" style={{ background: 'rgba(26,20,16,0.97)', borderTop: '1px solid var(--border)', backdropFilter: 'blur(10px)' }}>
+{[
+{ id: 'home', label: 'Home', icon: '🏠' },
+{ id: 'scan', label: 'Scan', icon: '📷' },
+{ id: 'vault', label: 'Vault', icon: '💼' },
+{ id: 'market', label: 'Market', icon: '📊' },
+{ id: 'ann', label: 'ANN', icon: '🤖' },
+].map(tab => (
+<button key={tab.id} className={`nav-item ${view === tab.id ? 'active' : ''}`} onClick={() => setView(tab.id)}>
+<span className="nav-icon">{tab.icon}</span>
+<span style={{ fontSize: 10 }}>{tab.label}</span>
+</button>
+))}
+</nav>
+
+{/* Tier Upgrade Modal */}
+{showTierModal && (
+<div style={{
+position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 300,
+display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20
+}} onClick={() => setShowTierModal(false)}>
+<div className="card card-gold" style={{ width: '100%', maxWidth: 360 }} onClick={e => e.stopPropagation()}>
+<h3 style={{ fontWeight: 'bold', color: 'var(--gold)', textAlign: 'center', marginBottom: 12 }}>Upgrade Tier</h3>
+{Object.entries(TIERS).map(([k, v]) => (
+<div key={k} className="py-3 flex justify-between items-center" style={{
+borderBottom: k < 4 ? '1px solid var(--border)' : 'none',
+opacity: parseInt(k) === userTier ? 1 : 0.7
+}}>
+<div>
+<p style={{ fontWeight: 'bold', color: 'var(--gold-light)' }}>{v.name}</p>
+<p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{v.coinLimit === Infinity ? 'Unlimited' : v.coinLimit} coins • {v.photosPerSide} photos/side</p>
+</div>
+<div className="text-right">
+<p style={{ fontWeight: 'bold', color: 'var(--neon-green)' }}>{v.price}</p>
+{parseInt(k) === userTier ? (
+<span className="badge badge-hold">Current</span>
+) : (
+<button className="btn-outline text-xs" onClick={() => { setUserTier(parseInt(k)); setShowTierModal(false); showToast(`✅ Upgraded to ${v.name}!`); }}>
+Select
+</button>
+)}
+</div>
+</div>
+))}
+<button className="btn-outline mt-3" style={{ width: '100%' }} onClick={() => setShowTierModal(false)}>Close</button>
+</div>
+</div>
+)}
+
+{/* Toast */}
 {toast && <div className="toast">{toast}</div>}
 </div>
 );
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<CoinverseApp />);
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
-
-<!-- Service Worker for PWA (offline support) -->
 <script>
 if ('serviceWorker' in navigator) {
 window.addEventListener('load', () => {
-navigator.serviceWorker.register(
-URL.createObjectURL(
-new Blob([`
-const CACHE = 'coinverse-v1';
-self.addEventListener('install', e => {
-e.waitUntil(
-caches.open(CACHE).then(cache =>
-cache.addAll(['./'])
-)
-);
-});
-self.addEventListener('fetch', e => {
-e.respondWith(
-caches.match(e.request).then(resp =>
-resp || fetch(e.request).then(response => {
-if(response.ok) {
-const clone = response.clone();
-caches.open(CACHE).then(cache => cache.put(e.request, clone));
-}
-return response;
-})
-)
-);
-});
-`], { type: 'application/javascript' })
-)
-);
+navigator.serviceWorker.register(URL.createObjectURL(new Blob([`const C='coinverse-v2';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./'])))});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{if(res.ok){const cl=res.clone();caches.open(C).then(c=>c.put(e.request,cl));}return res;})))})`], { type: 'application/javascript' })));
 });
 }
 </script>
@@ -477,4 +957,3 @@ return response;
 </html>
 
 Sent from my iPhone
-Show quoted text
